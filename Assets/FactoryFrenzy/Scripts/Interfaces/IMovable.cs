@@ -6,7 +6,6 @@ public interface IMovable
   float LookSpeed { get; }
   float JumpForce { get; }
   Rigidbody Rb { get; }
-
   bool IsMoving { get; }
   bool IsGrounded { get; }
 

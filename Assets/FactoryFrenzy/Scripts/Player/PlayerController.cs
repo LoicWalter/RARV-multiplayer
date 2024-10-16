@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour, IMovable
   [SerializeField] private bool DrawGizmos = true;
 
   [Header("Settings"), Space(5)]
+  private Vector3 _moveDirection;
   [Header("Movement")]
   [Tooltip("The speed at which the player moves when running.")]
   [SerializeField] private float RunSpeed = 10f;
@@ -20,7 +21,6 @@ public class PlayerController : MonoBehaviour, IMovable
   [SerializeField] private float WalkSpeed = 5f;
   [Tooltip("Whether the player is running or walking.")]
   [SerializeField] private bool IsRunning = false;
-  private Vector3 _moveDirection;
 
   [field: SerializeField, Tooltip("The speed at which the player rotates their view.")]
   public float LookSpeed { get; private set; } = 2f;
