@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// The player controller
+/// It handles the player's movement and input, and references some useful Transform objects
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour, IMovable
+[DisallowMultipleComponent]
+public class PlayerController : MonoBehaviour, IPlayerMovable
 {
   #region Variables
 
@@ -21,12 +26,14 @@ public class PlayerController : MonoBehaviour, IMovable
   [SerializeField] private float WalkSpeed = 5f;
   [Tooltip("Whether the player is running or walking.")]
   [SerializeField] private bool IsRunning = false;
+  [Tooltip("The acceleration of the player.")]
+  public float Acceleration = 5f;
 
   [field: SerializeField, Tooltip("The speed at which the player rotates their view.")]
   public float LookSpeed { get; private set; } = 2f;
 
   [field: SerializeField, Tooltip("The force applied to the player when they jump.")]
-  public float JumpForce { get; private set; } = 5f;
+  public float JumpForce { get; private set; } = 2f;
 
   [field: SerializeField, Header("Ground Check"), Tooltip("Whether the player is grounded or not.")]
   public bool IsGrounded { get; private set; } = false;
@@ -39,6 +46,11 @@ public class PlayerController : MonoBehaviour, IMovable
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
+
+  [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
+  public Transform AimPoint { get; private set; }
+
+  private float _currentSpeed = 0f;
 
   #endregion
 
@@ -137,12 +149,18 @@ public class PlayerController : MonoBehaviour, IMovable
 
   public void Move(Vector3 direction)
   {
-    float _targetSpeed = Speed * direction.magnitude;
-    if (direction == Vector3.zero) _targetSpeed = 0;
+    float targetSpeed = Speed * direction.magnitude;
+    if (direction == Vector3.zero) targetSpeed = 0;
+
+    // Interpoler la vitesse actuelle vers la vitesse cible
+    _currentSpeed = Mathf.Lerp(_currentSpeed, targetSpeed, Time.deltaTime * Acceleration);
 
     Vector3 moveDirection = transform.TransformDirection(direction);
     moveDirection.y = 0;
-    Rb.velocity = new Vector3(moveDirection.x * _targetSpeed, Rb.velocity.y, moveDirection.z * _targetSpeed);
+
+    // Ajouter la vitesse calculée à la vitesse actuelle du Rigidbody
+    Vector3 newVelocity = new(moveDirection.x * _currentSpeed, 0, moveDirection.z * _currentSpeed);
+    Rb.velocity += newVelocity - new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
   }
 
   #endregion

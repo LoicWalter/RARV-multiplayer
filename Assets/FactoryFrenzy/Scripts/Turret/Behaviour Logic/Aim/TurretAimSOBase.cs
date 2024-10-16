@@ -1,12 +1,19 @@
 using UnityEngine;
 
+/// <summary>
+/// The base class for the aim state of the turret
+/// </summary>
 public class TurretAimSOBase : ScriptableObject
 {
   [Header("Settings")]
+  [Tooltip("The speed of the rotation.")]
+  [Range(0, 10)]
+  [SerializeField] private int AngleTolerance = 10;
   protected Turret turret;
   protected Transform transform;
   protected GameObject gameObject;
-  protected GameObject playerToAimAt;
+  protected PlayerController playerToAimAt;
+  private float _timer = 0;
 
 
   public virtual void Initialize(GameObject gameObject, Turret turret)
@@ -16,7 +23,10 @@ public class TurretAimSOBase : ScriptableObject
     transform = gameObject.transform;
   }
 
-  public virtual void DoEnterLogic() { }
+  public virtual void DoEnterLogic()
+  {
+    turret.LineOfSight.enabled = true;
+  }
 
   public virtual void DoExitLogic()
   {
@@ -30,13 +40,20 @@ public class TurretAimSOBase : ScriptableObject
       turret.StateMachine.ChangeState(turret.AimState);
       return;
     }
+    else if (turret.PlayersInRange.Count == 0)
+    {
+      turret.StateMachine.ChangeState(turret.IdleState);
+    }
   }
 
   public virtual void DoPhysicsLogic() { }
 
-  public virtual void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType) { }
 
-  public virtual void ResetValues() { }
+
+  public virtual void ResetValues()
+  {
+    turret.LineOfSight.enabled = false;
+  }
 
 
   /// <summary>
@@ -49,10 +66,35 @@ public class TurretAimSOBase : ScriptableObject
   {
     if (turret.PlayersInRange != null && turret.PlayersInRange.Count > 0)
     {
-      playerToAimAt = turret.PlayersInRange[0].gameObject;
+      playerToAimAt = turret.PlayersInRange[0];
       return true;
     }
     playerToAimAt = null;
     return false;
+  }
+
+  /// <summary>
+  ///  Sets the line of sight from the turret to the current aim direction.
+  /// </summary>
+  /// <param name="direction"></param>
+  public virtual void SetLineOfSight(Vector3 direction)
+  {
+    turret.LineOfSight.SetPosition(0, turret.BulletSpawnPoint.position);
+    turret.LineOfSight.SetPosition(1, turret.BulletSpawnPoint.position + direction * turret.DetectionRange);
+  }
+
+  /// <summary>
+  ///  Triggers the shot when the timer is greater than the attack cooldown.
+  /// </summary>
+  /// <param name="currentPosition"></param>
+  /// <param name="targetPosition"></param>
+  public virtual void TriggerShot(Vector3 currentPosition, Vector3 targetPosition)
+  {
+    _timer += Time.deltaTime;
+    if (_timer >= turret.TurretAttackBaseInstance.AttackCooldown)
+    {
+      turret.StateMachine.ChangeState(turret.AttackState);
+      _timer = 0;
+    }
   }
 }

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// The idle state of the turret
+/// </summary>
 public class TurretIdleState : TurretState
 {
 
@@ -29,11 +32,5 @@ public class TurretIdleState : TurretState
   {
     base.PhysicsUpdate();
     turret.TurretIdleBaseInstance.DoPhysicsLogic();
-  }
-
-  public override void AnimationTriggerEvent(Turret.AnimationTriggerType animationTriggerType)
-  {
-    base.AnimationTriggerEvent(animationTriggerType);
-    turret.TurretIdleBaseInstance.DoAnimationTriggerEventLogic(animationTriggerType);
   }
 }

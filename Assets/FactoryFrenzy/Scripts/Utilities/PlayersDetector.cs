@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Detects players within a specified range.
+/// It uses a sphere collider to detect players.
+/// </summary>
 [RequireComponent(typeof(SphereCollider))]
 public class PlayersDetector : MonoBehaviour
 {
@@ -11,21 +15,25 @@ public class PlayersDetector : MonoBehaviour
   [Tooltip("The color of the gizmos.")]
   [SerializeField] private Color gizmosColor = Color.green;
 
-  [Header("Settings")]
-  [Tooltip("The range at which the gameObject is detected.")]
-  [SerializeField] private float detectionRange = 10f;
+  [field: SerializeField, Header("Settings"), Tooltip("The range at which the gameObject is detected.")]
+  public float DetectionRange { get; private set; } = 10f;
 
   private SphereCollider detectionCollider;
 
-  [field: SerializeField] public List<PlayerController> PlayersInRange { get; private set; } = new List<PlayerController>();
+  public List<PlayerController> PlayersInRange { get; private set; } = new List<PlayerController>();
 
   private void Awake()
   {
     detectionCollider = GetComponent<SphereCollider>();
     detectionCollider.isTrigger = true;
-    detectionCollider.radius = detectionRange;
+    detectionCollider.radius = DetectionRange;
   }
 
+  /// <summary>
+  ///  Called when another collider enters the trigger.
+  ///  Adds the player to the list of players in range.
+  /// </summary>
+  /// <param name="other"></param>
   private void OnTriggerEnter(Collider other)
   {
     var otherRb = other.attachedRigidbody;
@@ -37,6 +45,11 @@ public class PlayersDetector : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Called when another collider exits the trigger.
+  /// Removes the player from the list of players in range.
+  /// </summary>
+  /// <param name="other"></param>
   private void OnTriggerExit(Collider other)
   {
     var otherRb = other.attachedRigidbody;
@@ -52,6 +65,6 @@ public class PlayersDetector : MonoBehaviour
   {
     if (!DrawGizmos) return;
     Gizmos.color = gizmosColor;
-    Gizmos.DrawWireSphere(transform.position, detectionRange);
+    Gizmos.DrawWireSphere(transform.position, DetectionRange);
   }
 }

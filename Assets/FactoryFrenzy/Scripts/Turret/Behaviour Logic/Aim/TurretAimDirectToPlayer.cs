@@ -1,17 +1,12 @@
 using UnityEngine;
 
+/// <summary>
+/// The aim at player behaviour logic for the turret
+/// This will make the turret aim directly at the player
+/// </summary>
 [CreateAssetMenu(fileName = "Turret Aim - Aim at Player", menuName = "Turret/Behaviour Logic/Aim/Aim at PLayer")]
 public class TurretAimDirectToPlayer : TurretAimSOBase
 {
-  [Header("Settings")]
-  [SerializeField] private float rotationSpeed = 5f;
-  [SerializeField] private float _attackCooldown = 2f;
-  private float _timer = 0;
-  public override void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType)
-  {
-    base.DoAnimationTriggerEventLogic(animationTriggerType);
-  }
-
   public override void DoEnterLogic()
   {
     base.DoEnterLogic();
@@ -30,19 +25,16 @@ public class TurretAimDirectToPlayer : TurretAimSOBase
       return;
     }
 
-    Vector3 playerPosition = playerToAimAt.transform.position;
-    Vector3 direction = playerPosition - transform.position;
-    Quaternion lookRotation = Quaternion.LookRotation(direction);
-    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+    Vector3 aimAt = playerToAimAt.AimPoint.position;
+    Vector3 direction = aimAt - transform.position;
 
-    //calculate the angle
-    float angle = Vector3.Angle(transform.forward, direction);
-    _timer += Time.deltaTime;
-    if (angle < 1 && _timer >= _attackCooldown)
-    {
-      turret.StateMachine.ChangeState(turret.AttackState);
-      _timer = 0;
-    }
+    // Rotate the turret to look at the player
+    Quaternion lookRotation = Quaternion.LookRotation(direction);
+    transform.rotation = lookRotation;
+
+    SetLineOfSight(direction);
+
+    TriggerShot(transform.forward, direction);
   }
 
   public override void DoPhysicsLogic()

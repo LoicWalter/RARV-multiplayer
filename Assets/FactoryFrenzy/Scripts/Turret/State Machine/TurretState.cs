@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// A generic state for the turret state machine
+/// </summary>
 public class TurretState
 {
   protected Turret turret;
@@ -24,6 +27,4 @@ public class TurretState
   public virtual void FrameUpdate() { }
 
   public virtual void PhysicsUpdate() { }
-
-  public virtual void AnimationTriggerEvent(Turret.AnimationTriggerType animationTriggerType) { }
 }
