@@ -10,12 +10,10 @@ public class FanTrapPushSystem : MonoBehaviour
 
   private void OnTriggerStay(Collider other)
   {
-    // check if the object parent has the player tag
-    if (other.transform.parent.CompareTag("Player"))
+    var otherRb = other.attachedRigidbody;
+    if (otherRb && otherRb.CompareTag("Player"))
     {
-      Debug.Log("Pushing player");
-      var player = other.transform.parent.GetComponent<IMovable>();
-      player?.Rb.AddForce(transform.forward * pushForceMultiplier, ForceMode.Force);
+      other.attachedRigidbody.AddForce(transform.forward * pushForceMultiplier, ForceMode.Force);
     }
   }
 }
