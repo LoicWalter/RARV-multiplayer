@@ -46,11 +46,11 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
+  private Vector3 _currentVelocity;
+
 
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
   public Transform AimPoint { get; private set; }
-
-  private float _currentSpeed = 0f;
 
   #endregion
 
@@ -147,20 +147,15 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
     transform.Rotate(Vector3.up, rotation.x * LookSpeed);
   }
 
-  public void Move(Vector3 direction)
+  public void Move(Vector3 requestedDirection)
   {
-    float targetSpeed = Speed * direction.magnitude;
-    if (direction == Vector3.zero) targetSpeed = 0;
+    Vector3 currentvelocity = Rb.velocity;
+    Vector3 MoveDirection = transform.TransformDirection(requestedDirection);
+    Vector3 targetVelocity = MoveDirection * Speed;
 
-    // Interpoler la vitesse actuelle vers la vitesse cible
-    _currentSpeed = Mathf.Lerp(_currentSpeed, targetSpeed, Time.deltaTime * Acceleration);
-
-    Vector3 moveDirection = transform.TransformDirection(direction);
-    moveDirection.y = 0;
-
-    // Ajouter la vitesse calculée à la vitesse actuelle du Rigidbody
-    Vector3 newVelocity = new(moveDirection.x * _currentSpeed, 0, moveDirection.z * _currentSpeed);
-    Rb.velocity += newVelocity - new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
+    // Smoothly interpolate between the current velocity and the target velocity
+    Vector3 newVelocity = Vector3.SmoothDamp(currentvelocity, targetVelocity, ref _currentVelocity, 0.1f);
+    Rb.velocity = new Vector3(newVelocity.x, currentvelocity.y, newVelocity.z);
   }
 
   #endregion
