@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// The base class for the turret attack logic
+/// </summary>
 public class TurretAttackSOBase : ScriptableObject
 {
   [Header("Settings")]
@@ -31,8 +34,5 @@ public class TurretAttackSOBase : ScriptableObject
 
   public virtual void DoPhysicsLogic() { }
 
-  public virtual void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType) { }
-
   public virtual void ResetValues() { }
-
 }

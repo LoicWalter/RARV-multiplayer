@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// The base class for the turret idle state logic
+/// </summary>
 public class TurretIdleSOBase : ScriptableObject
 {
   [Header("Settings")]
@@ -32,7 +35,7 @@ public class TurretIdleSOBase : ScriptableObject
 
   public virtual void DoPhysicsLogic() { }
 
-  public virtual void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType) { }
+
 
   public virtual void ResetValues() { }
 }

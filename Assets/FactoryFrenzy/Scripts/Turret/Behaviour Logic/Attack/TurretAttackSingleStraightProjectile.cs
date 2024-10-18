@@ -1,6 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// The base class for the attack logic of the turret
+/// This class is used to shoot a single straight projectile
+/// </summary>
 [CreateAssetMenu(fileName = "Turret Attack - Single Straight Projectile", menuName = "Turret/Behaviour Logic/Attack/Single Straight Projectile")]
 public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
 {
@@ -11,12 +15,6 @@ public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
   [Tooltip("The time till the bullet is destroyed.")]
   [SerializeField] private float _timeTillDestroy = 5f;
 
-
-
-  public override void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType)
-  {
-    base.DoAnimationTriggerEventLogic(animationTriggerType);
-  }
 
   public override void DoEnterLogic()
   {
@@ -50,10 +48,14 @@ public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
     base.Initialize(gameObject, turret);
   }
 
+  /// <summary>
+  ///  Shoots the bullet and destroys it after a certain time.
+  /// </summary>
   public void Shoot()
   {
     GameObject bullet = Instantiate(_bulletPrefab, turret.BulletSpawnPoint.position, Quaternion.identity);
-    bullet.GetComponent<Rigidbody>().velocity = turret.BulletSpawnPoint.forward * BulletSpeed;
+    var bulletRb = bullet.GetComponent<Rigidbody>();
+    bulletRb.AddForce(bulletRb.mass * BulletSpeed * turret.BulletSpawnPoint.forward, ForceMode.Impulse);
     Destroy(bullet, _timeTillDestroy);
   }
 }

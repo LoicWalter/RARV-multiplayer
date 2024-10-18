@@ -1,14 +1,12 @@
 using UnityEngine;
 
+/// <summary>
+/// The idle state of the turret
+/// This one is for when the turret is not moving at all
+/// </summary>
 [CreateAssetMenu(fileName = "Turret Idle - No Movement", menuName = "Turret/Behaviour Logic/Idle/No Movement")]
 public class TurretIdleNoMovement : TurretIdleSOBase
 {
-
-  public override void DoAnimationTriggerEventLogic(Turret.AnimationTriggerType animationTriggerType)
-  {
-    base.DoAnimationTriggerEventLogic(animationTriggerType);
-  }
-
   public override void DoEnterLogic()
   {
     base.DoEnterLogic();

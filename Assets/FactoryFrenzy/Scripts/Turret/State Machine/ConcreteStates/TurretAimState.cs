@@ -1,8 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// The aim state of the turret
+/// </summary>
 public class TurretAimState : TurretState
 {
-
   public TurretAimState(Turret turret, TurretStateMachine turretStateMachine) : base(turret, turretStateMachine) { }
 
   public override void EnterState()
@@ -29,11 +31,5 @@ public class TurretAimState : TurretState
   {
     base.PhysicsUpdate();
     turret.TurretAimBaseInstance.DoPhysicsLogic();
-  }
-
-  public override void AnimationTriggerEvent(Turret.AnimationTriggerType animationTriggerType)
-  {
-    base.AnimationTriggerEvent(animationTriggerType);
-    turret.TurretAimBaseInstance.DoAnimationTriggerEventLogic(animationTriggerType);
   }
 }

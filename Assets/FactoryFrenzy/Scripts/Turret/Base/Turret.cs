@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// The turret class
+/// It is responsible for the behavior of the turret
+/// </summary>
 public class Turret : MonoBehaviour
 {
   public Rigidbody Rb { get; set; }
@@ -39,6 +43,15 @@ public class Turret : MonoBehaviour
   private PlayersDetector _playersDetector;
   [Tooltip("The players in range of the turret.")]
   public List<PlayerController> PlayersInRange => _playersDetector.PlayersInRange;
+  public float DetectionRange => _playersDetector.DetectionRange;
+
+  #endregion
+
+  #region Aesthetics
+
+  [Header("Aesthetics")]
+  [Tooltip("The turret's line of sight.")]
+  public LineRenderer LineOfSight;
 
   #endregion
 
@@ -85,19 +98,4 @@ public class Turret : MonoBehaviour
   }
 
   #endregion
-
-  #region Animation Events
-
-  private void AnimationTriggerEvent(AnimationTriggerType animationState)
-  {
-    StateMachine.CurrentState.AnimationTriggerEvent(animationState);
-  }
-  public enum AnimationTriggerType
-  {
-    EnemyDamaged,
-    PlayFootstepSound,
-  }
-
-  #endregion
-
 }
