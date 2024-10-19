@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,7 +12,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 [DisallowMultipleComponent]
-public class PlayerController : MonoBehaviour, IPlayerMovable
+public class PlayerController : NetworkBehaviour, IPlayerMovable
 {
   #region Variables
 
@@ -26,8 +29,6 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
   [SerializeField] private float WalkSpeed = 5f;
   [Tooltip("Whether the player is running or walking.")]
   [SerializeField] private bool IsRunning = false;
-  [Tooltip("The acceleration of the player.")]
-  public float Acceleration = 5f;
 
   [field: SerializeField, Tooltip("The speed at which the player rotates their view.")]
   public float LookSpeed { get; private set; } = 2f;
@@ -49,8 +50,10 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
 
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
   public Transform AimPoint { get; private set; }
+  [field: SerializeField, Tooltip("The camera used to follow the player.")]
+  public CinemachineVirtualCamera VirtualCamera { get; private set; }
 
-  private float _currentSpeed = 0f;
+  private Vector3 _currentVelocity;
 
   #endregion
 
@@ -64,16 +67,36 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
 
   #endregion
 
+  #region Network Variables
+
+  NetworkVariable<FixedString32Bytes> networkPlayerName = new NetworkVariable<FixedString32Bytes>(new FixedString32Bytes("Player"));
+
+  #endregion
+
+  #region Network Methods
+
+  public override void OnNetworkSpawn()
+  {
+    base.OnNetworkSpawn();
+
+    if (IsOwner)
+    {
+      VirtualCamera.enabled = true;
+      InputActions = new PlayerInputActions();
+      InputActions.Enable();
+
+      Cursor.lockState = CursorLockMode.Locked;
+      Cursor.visible = false;
+    }
+  }
+
+  #endregion
+
   #region Unity Methods
 
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-    InputActions = new PlayerInputActions();
-    InputActions.Enable();
-
-    Cursor.lockState = CursorLockMode.Locked;
-    Cursor.visible = false;
   }
 
   private void Update()
@@ -147,20 +170,15 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
     transform.Rotate(Vector3.up, rotation.x * LookSpeed);
   }
 
-  public void Move(Vector3 direction)
+  public void Move(Vector3 requestedDirection)
   {
-    float targetSpeed = Speed * direction.magnitude;
-    if (direction == Vector3.zero) targetSpeed = 0;
+    Vector3 currentvelocity = Rb.velocity;
+    Vector3 MoveDirection = transform.TransformDirection(requestedDirection);
+    Vector3 targetVelocity = MoveDirection * Speed;
 
-    // Interpoler la vitesse actuelle vers la vitesse cible
-    _currentSpeed = Mathf.Lerp(_currentSpeed, targetSpeed, Time.deltaTime * Acceleration);
-
-    Vector3 moveDirection = transform.TransformDirection(direction);
-    moveDirection.y = 0;
-
-    // Ajouter la vitesse calculée à la vitesse actuelle du Rigidbody
-    Vector3 newVelocity = new(moveDirection.x * _currentSpeed, 0, moveDirection.z * _currentSpeed);
-    Rb.velocity += newVelocity - new Vector3(Rb.velocity.x, 0, Rb.velocity.z);
+    // Smoothly interpolate between the current velocity and the target velocity
+    Vector3 newVelocity = Vector3.SmoothDamp(currentvelocity, targetVelocity, ref _currentVelocity, 0.1f);
+    Rb.velocity = new Vector3(newVelocity.x, currentvelocity.y, newVelocity.z);
   }
 
   #endregion

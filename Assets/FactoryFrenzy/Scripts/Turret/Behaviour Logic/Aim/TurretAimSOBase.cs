@@ -5,10 +5,6 @@ using UnityEngine;
 /// </summary>
 public class TurretAimSOBase : ScriptableObject
 {
-  [Header("Settings")]
-  [Tooltip("The speed of the rotation.")]
-  [Range(0, 10)]
-  [SerializeField] private int AngleTolerance = 10;
   protected Turret turret;
   protected Transform transform;
   protected GameObject gameObject;
