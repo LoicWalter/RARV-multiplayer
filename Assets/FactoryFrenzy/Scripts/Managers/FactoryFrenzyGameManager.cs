@@ -4,8 +4,12 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// The game manager for the Factory Frenzy game.
+/// </summary>
 public class FactoryFrenzyGameManager : NetworkBehaviour
 {
+  #region Variables
   [SerializeField] private Transform _playerPrefab;
   private Dictionary<ulong, bool> _playerReadyStates = new();
 
@@ -30,6 +34,10 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
 
   public string PlayerName { get; set; }
 
+  #endregion
+
+  #region Unity Methods
+
   private void Awake()
   {
     if (Instance == null)
@@ -41,63 +49,6 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
       Destroy(Instance.gameObject);
       Instance = this;
     }
-  }
-
-  public override void OnNetworkSpawn()
-  {
-    _currentGameState.OnValueChanged += State_OnValueChanged;
-
-    if (IsServer)
-    {
-      NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
-    }
-  }
-
-  private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
-  {
-    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-    {
-      Transform playerTransform = Instantiate(_playerPrefab);
-      playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-    }
-  }
-
-  private void State_OnValueChanged(GameState previousState, GameState newState)
-  {
-    OnGameStateChanged?.Invoke(this, EventArgs.Empty);
-  }
-
-  public void SetGameState(GameState state)
-  {
-    _currentGameState.Value = state;
-  }
-
-  [ServerRpc(RequireOwnership = false)]
-  private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
-  {
-    _playerReadyStates[serverRpcParams.Receive.SenderClientId] = true;
-    bool allPlayersReady = true;
-    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-    {
-      if (!_playerReadyStates.ContainsKey(clientId) || !_playerReadyStates[clientId])
-      {
-        allPlayersReady = false;
-        break;
-      }
-    }
-
-    if (allPlayersReady)
-    {
-      SetGameState(GameState.Countdown);
-    }
-  }
-
-  private void GameInput_OnPlayerReadyChanged()
-  {
-    if (_currentGameState.Value != GameState.WaitingToStart) return;
-    IsLocalPlayerReady = true;
-    SetPlayerReadyServerRpc();
-    OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
   }
 
   private void Update()
@@ -119,15 +70,80 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     }
   }
 
-  private void UpdateCountdown()
-  {
-    if (CountdownDuration.Value <= 0)
-    {
-      SetGameState(GameState.Playing);
-      return;
-    }
+  #endregion
 
-    CountdownDuration.Value -= Time.deltaTime;
+  #region Network Methods
+
+  public override void OnNetworkSpawn()
+  {
+    _currentGameState.OnValueChanged += State_OnValueChanged;
+
+    if (IsServer)
+    {
+      NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+    }
+  }
+
+  #endregion
+
+  #region Event Handlers
+
+  /// <summary>
+  /// Spawns the player objects for each connected client when the scene is loaded.
+  /// </summary>
+  /// <param name="sceneName">
+  ///   The name of the scene that was loaded.
+  /// </param>
+  /// <param name="loadSceneMode">
+  ///   The mode in which the scene was loaded.
+  /// </param>
+  /// <param name="clientsCompleted">
+  ///   The list of clients that completed loading the scene.
+  /// </param>
+  /// <param name="clientsTimedOut">
+  ///   The list of clients that timed out while loading the scene.
+  /// </param>
+  private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+  {
+    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+    {
+      Transform playerTransform = Instantiate(_playerPrefab);
+      playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+    }
+  }
+
+  /// <summary>
+  /// Handles the event when the game state changes.
+  /// </summary>
+  /// <param name="previousState">
+  ///   The previous state of the game.
+  /// </param>
+  /// <param name="newState">
+  ///   The new state of the game.
+  /// </param>
+  private void State_OnValueChanged(GameState previousState, GameState newState)
+  {
+    OnGameStateChanged?.Invoke(this, EventArgs.Empty);
+  }
+
+  /// <summary>
+  /// Handles the event when the local player's ready state changes.
+  /// </summary>
+  // private void GameInput_OnPlayerReadyChanged()
+  // {
+  //   if (_currentGameState.Value != GameState.WaitingToStart) return;
+  //   IsLocalPlayerReady = true;
+  //   SetPlayerReadyServerRpc();
+  //   OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
+  // }
+
+  #endregion
+
+  #region Public Methods
+
+  public void SetGameState(GameState state)
+  {
+    _currentGameState.Value = state;
   }
 
   public bool IsCountdownActive()
@@ -150,4 +166,40 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     return _currentGameState.Value == GameState.WaitingToStart;
   }
 
+  #endregion
+
+  #region Server Methods
+
+  // [ServerRpc(RequireOwnership = false)]
+  // private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
+  // {
+  //   _playerReadyStates[serverRpcParams.Receive.SenderClientId] = true;
+  //   bool allPlayersReady = true;
+  //   foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+  //   {
+  //     if (!_playerReadyStates.ContainsKey(clientId) || !_playerReadyStates[clientId])
+  //     {
+  //       allPlayersReady = false;
+  //       break;
+  //     }
+  //   }
+
+  //   if (allPlayersReady)
+  //   {
+  //     SetGameState(GameState.Countdown);
+  //   }
+  // }
+
+  private void UpdateCountdown()
+  {
+    if (CountdownDuration.Value <= 0)
+    {
+      SetGameState(GameState.Playing);
+      return;
+    }
+
+    CountdownDuration.Value -= Time.deltaTime;
+  }
+
+  #endregion
 }
