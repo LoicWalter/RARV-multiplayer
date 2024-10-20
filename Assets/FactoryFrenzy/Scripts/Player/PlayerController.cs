@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 
 /// <summary>
 /// The player controller
@@ -19,6 +20,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   [Header("Debug")]
   [Tooltip("Whether to draw gizmos in the scene view.")]
   [SerializeField] private bool DrawGizmos = true;
+  [Tooltip("Whether the player is the owner of the object. Useful when testing without a NetworkManager.")]
+  [SerializeField] private bool _forceIsOwner = false;
 
   [Header("Settings"), Space(5)]
   private Vector3 _moveDirection;
@@ -48,28 +51,24 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
 
+  [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
+  public CinemachineVirtualCamera VirtualCameraPrefab { get; private set; }
+  [Tooltip("The point at which the camera will look.")]
+  public Transform CameraLookPoint;
+  [Tooltip("The point at which the camera will follow.")]
+  public Transform CameraFollowPoint;
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
   public Transform AimPoint { get; private set; }
-  [field: SerializeField, Tooltip("The camera used to follow the player.")]
-  public CinemachineVirtualCamera VirtualCamera { get; private set; }
-
+  [Tooltip("The player's visual representation.")]
+  [SerializeField] private PlayerVisual _playerVisual;
   private Vector3 _currentVelocity;
+  private CinemachineVirtualCamera _virtualCamera;
 
   #endregion
 
   #region Input Actions
 
-  public PlayerInputActions InputActions { get; private set; }
-  private InputAction MoveAction => InputActions.Player.Move;
-  private InputAction RunAction => InputActions.Player.Run;
-  private InputAction LookAction => InputActions.Player.Look;
-  private InputAction JumpAction => InputActions.Player.Jump;
-
-  #endregion
-
-  #region Network Variables
-
-  NetworkVariable<FixedString32Bytes> networkPlayerName = new NetworkVariable<FixedString32Bytes>(new FixedString32Bytes("Player"));
+  public PlayerInput playerInput;
 
   #endregion
 
@@ -78,50 +77,54 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public override void OnNetworkSpawn()
   {
     base.OnNetworkSpawn();
-
-    if (IsOwner)
+    if (!IsOwner && !_forceIsOwner)
     {
-      VirtualCamera.enabled = true;
-      InputActions = new PlayerInputActions();
-      InputActions.Enable();
-
-      Cursor.lockState = CursorLockMode.Locked;
-      Cursor.visible = false;
+      playerInput.enabled = false;
+      return;
     }
+
+    _virtualCamera = Instantiate(VirtualCameraPrefab, transform.position, Quaternion.identity);
+    _virtualCamera.Follow = CameraFollowPoint;
+    _virtualCamera.LookAt = CameraLookPoint;
+
+    _virtualCamera.enabled = true;
+
+    Cursor.lockState = CursorLockMode.Locked;
+    Cursor.visible = false;
+
+    playerInput.enabled = true;
   }
 
   #endregion
 
   #region Unity Methods
 
+  private void Start()
+  {
+    PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+    _playerVisual.SetPlayerColor(FactoryFrenzyMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+  }
+
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
+    OnNetworkSpawn();
   }
 
   private void Update()
   {
+    if (!IsOwner && !_forceIsOwner) return;
     GroundedCheck();
-    _moveDirection = new Vector3(MoveAction.ReadValue<Vector2>().x, 0, MoveAction.ReadValue<Vector2>().y);
+    if (Mouse.current.delta.ReadValue().magnitude > 0)
+    {
+      Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
+    }
   }
 
   private void FixedUpdate()
   {
+    if (!IsOwner && !_forceIsOwner) return;
     Move(_moveDirection);
-  }
-
-  private void OnEnable()
-  {
-    RunAction.performed += OnRunPerformed;
-    JumpAction.performed += OnJumpPerformed;
-    LookAction.performed += OnLookPerformed;
-  }
-
-  private void OnDisable()
-  {
-    RunAction.performed -= OnRunPerformed;
-    JumpAction.performed -= OnJumpPerformed;
-    LookAction.performed -= OnLookPerformed;
   }
 
   private void OnDrawGizmos()
@@ -135,19 +138,29 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   #region Input Methods
 
-  private void OnRunPerformed(InputAction.CallbackContext context)
+  public void OnMove(CallbackContext context)
   {
+    Debug.Log("Move performed");
+    _moveDirection = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
+  }
+
+  public void OnRun(CallbackContext context)
+  {
+    Debug.Log("Run performed");
     IsRunning = context.ReadValueAsButton();
   }
 
-  private void OnJumpPerformed(InputAction.CallbackContext context)
+  public void OnJump(CallbackContext context)
   {
+    Debug.Log("Jump performed");
     Jump();
   }
 
-  private void OnLookPerformed(InputAction.CallbackContext context)
+  //? Ne fonctionne pas pour une raison inconnue => n'est pas appelée
+  public void OnLook(CallbackContext context)
   {
-    Rotate(context.ReadValue<Vector2>());
+    Debug.Log("Look performed");
+    Rotate(new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y));
   }
 
   #endregion
@@ -169,6 +182,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   {
     transform.Rotate(Vector3.up, rotation.x * LookSpeed);
   }
+
 
   public void Move(Vector3 requestedDirection)
   {
