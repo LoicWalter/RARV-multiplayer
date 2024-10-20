@@ -183,7 +183,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     transform.Rotate(Vector3.up, rotation.x * LookSpeed);
   }
 
-
   public void Move(Vector3 requestedDirection)
   {
     Vector3 currentvelocity = Rb.velocity;
