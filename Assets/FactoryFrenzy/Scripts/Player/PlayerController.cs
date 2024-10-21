@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 
 /// <summary>
 /// The player controller
@@ -9,13 +13,15 @@ using UnityEngine.InputSystem;
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 [DisallowMultipleComponent]
-public class PlayerController : MonoBehaviour, IPlayerMovable
+public class PlayerController : NetworkBehaviour, IPlayerMovable
 {
   #region Variables
 
   [Header("Debug")]
   [Tooltip("Whether to draw gizmos in the scene view.")]
   [SerializeField] private bool DrawGizmos = true;
+  [Tooltip("Whether the player is the owner of the object. Useful when testing without a NetworkManager.")]
+  [SerializeField] private bool _forceIsOwner = false;
 
   [Header("Settings"), Space(5)]
   private Vector3 _moveDirection;
@@ -26,8 +32,6 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
   [SerializeField] private float WalkSpeed = 5f;
   [Tooltip("Whether the player is running or walking.")]
   [SerializeField] private bool IsRunning = false;
-  [Tooltip("The acceleration of the player.")]
-  public float Acceleration = 5f;
 
   [field: SerializeField, Tooltip("The speed at which the player rotates their view.")]
   public float LookSpeed { get; private set; } = 2f;
@@ -46,68 +50,99 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
-  private Vector3 _currentVelocity;
   public Vector3 RespawnPos;
   private float LimitY = -5f;
 
 
+  [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
+  public CinemachineVirtualCamera VirtualCameraPrefab { get; private set; }
+  [Tooltip("The point at which the camera will look.")]
+  public Transform CameraLookPoint;
+  [Tooltip("The point at which the camera will follow.")]
+  public Transform CameraFollowPoint;
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
   public Transform AimPoint { get; private set; }
+  [Tooltip("The player's visual representation.")]
+  [SerializeField] private PlayerVisual _playerVisual;
+  private Vector3 _currentVelocity;
+  private CinemachineVirtualCamera _virtualCamera;
 
   #endregion
 
   #region Input Actions
 
-  public PlayerInputActions InputActions { get; private set; }
-  private InputAction MoveAction => InputActions.Player.Move;
-  private InputAction RunAction => InputActions.Player.Run;
-  private InputAction LookAction => InputActions.Player.Look;
-  private InputAction JumpAction => InputActions.Player.Jump;
+  public PlayerInput playerInput;
+
+  #endregion
+
+  #region Network Methods
+
+  public override void OnNetworkSpawn()
+  {
+    base.OnNetworkSpawn();
+    if (!IsOwner && !_forceIsOwner)
+    {
+      playerInput.enabled = false;
+      return;
+    }
+
+    _virtualCamera = Instantiate(VirtualCameraPrefab, transform.position, Quaternion.identity);
+    _virtualCamera.Follow = CameraFollowPoint;
+    _virtualCamera.LookAt = CameraLookPoint;
+
+    _virtualCamera.enabled = true;
+
+    Cursor.lockState = CursorLockMode.Locked;
+    Cursor.visible = false;
+
+    playerInput.enabled = true;
+  }
 
   #endregion
 
   #region Unity Methods
 
+  private void Start()
+  {
+    PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+    _playerVisual.SetPlayerColor(FactoryFrenzyMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+  }
+
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-    InputActions = new PlayerInputActions();
-    InputActions.Enable();
 
     Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
 
     RespawnPos = transform.position;
+
+    OnNetworkSpawn();
   }
 
   private void Update()
   {
+    if (!IsOwner && !_forceIsOwner) return;
     GroundedCheck();
-    _moveDirection = new Vector3(MoveAction.ReadValue<Vector2>().x, 0, MoveAction.ReadValue<Vector2>().y);
+    RespawnPlayerAt();
 
-    if(transform.position.y < LimitY) 
-      {
-        transform.position = RespawnPos;
-      }
-  }
+    if (Mouse.current.delta.ReadValue().magnitude > 0)
+    {
+      Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
+    }
+}
 
   private void FixedUpdate()
   {
+    if (!IsOwner && !_forceIsOwner) return;
     Move(_moveDirection);
   }
 
-  private void OnEnable()
-  {
-    RunAction.performed += OnRunPerformed;
-    JumpAction.performed += OnJumpPerformed;
-    LookAction.performed += OnLookPerformed;
-  }
-
-  private void OnDisable()
-  {
-    RunAction.performed -= OnRunPerformed;
-    JumpAction.performed -= OnJumpPerformed;
-    LookAction.performed -= OnLookPerformed;
+  private void RespawnPlayerAt(){
+    if(transform.position.y < LimitY) 
+    {
+      transform.position = RespawnPos;
+    }
   }
 
   private void OnDrawGizmos()
@@ -121,19 +156,29 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
 
   #region Input Methods
 
-  private void OnRunPerformed(InputAction.CallbackContext context)
+  public void OnMove(CallbackContext context)
   {
+    Debug.Log("Move performed");
+    _moveDirection = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
+  }
+
+  public void OnRun(CallbackContext context)
+  {
+    Debug.Log("Run performed");
     IsRunning = context.ReadValueAsButton();
   }
 
-  private void OnJumpPerformed(InputAction.CallbackContext context)
+  public void OnJump(CallbackContext context)
   {
+    Debug.Log("Jump performed");
     Jump();
   }
 
-  private void OnLookPerformed(InputAction.CallbackContext context)
+  //? Ne fonctionne pas pour une raison inconnue => n'est pas appelée
+  public void OnLook(CallbackContext context)
   {
-    Rotate(context.ReadValue<Vector2>());
+    Debug.Log("Look performed");
+    Rotate(new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y));
   }
 
   #endregion
