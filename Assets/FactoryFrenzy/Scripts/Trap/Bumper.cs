@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bumper : MonoBehaviour
 {
-    [SerializeField] private float bounceForce = 3;
+    [SerializeField] private float _bounceForce = 3;
 
     void OnCollisionEnter(Collision other)
     {
@@ -13,7 +13,7 @@ public class Bumper : MonoBehaviour
             var player = other.gameObject.GetComponent<IPlayerMovable>();
 
             Vector3 bounceDirection = other.contacts[0].normal;
-            player.Rb.AddForce(-bounceDirection * bounceForce, ForceMode.Impulse);
+            player.Rb.AddForce(-bounceDirection * _bounceForce, ForceMode.Impulse);
         }
     }
 }

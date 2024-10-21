@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
   private Vector3 _currentVelocity;
+  public Vector3 RespawnPos;
+  private float LimitY = -5f;
 
 
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
@@ -74,12 +76,19 @@ public class PlayerController : MonoBehaviour, IPlayerMovable
 
     Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
+
+    RespawnPos = transform.position;
   }
 
   private void Update()
   {
     GroundedCheck();
     _moveDirection = new Vector3(MoveAction.ReadValue<Vector2>().x, 0, MoveAction.ReadValue<Vector2>().y);
+
+    if(transform.position.y < LimitY) 
+      {
+        transform.position = RespawnPos;
+      }
   }
 
   private void FixedUpdate()
