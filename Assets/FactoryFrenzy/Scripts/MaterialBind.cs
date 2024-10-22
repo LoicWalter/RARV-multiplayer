@@ -15,7 +15,7 @@ public class MaterialBind : MonoBehaviour
 
     // Permet au code de s'exécuter même lorsque des modifications sont faites dans l'éditeur
     [ExecuteInEditMode]
-    void EditorMoi()
+    void OnValidate()
     {
         BindMaterial();
     }

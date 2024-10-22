@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 7381623519353866150}
   - component: {fileID: 8939566332852155186}
   - component: {fileID: 7951244369604850919}
-  - component: {fileID: 2373971841377831261}
   m_Layer: 0
   m_Name: Tooth 3
   m_TagString: Untagged
@@ -449,28 +448,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862115405284367063}
   m_Mesh: {fileID: 0}
---- !u!64 &2373971841377831261
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862115405284367063}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &1364608182786114018
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,7 +461,6 @@ GameObject:
   - component: {fileID: 1891984007030958358}
   - component: {fileID: 5118288567473994196}
   - component: {fileID: 5234838273866213738}
-  - component: {fileID: 1023511764820201040}
   m_Layer: 0
   m_Name: BackThroatDarkerPart
   m_TagString: Untagged
@@ -1211,28 +1187,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1364608182786114018}
   m_Mesh: {fileID: 0}
---- !u!64 &1023511764820201040
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364608182786114018}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &1744139240544989388
 GameObject:
   m_ObjectHideFlags: 0
@@ -1314,7 +1268,6 @@ GameObject:
   - component: {fileID: 1365611937810005123}
   - component: {fileID: 3706566739912785730}
   - component: {fileID: 1017636171672789453}
-  - component: {fileID: 2859899893117697418}
   m_Layer: 0
   m_Name: Tooth 5
   m_TagString: Untagged
@@ -1750,28 +1703,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3147006457756360127}
   m_Mesh: {fileID: 0}
---- !u!64 &2859899893117697418
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3147006457756360127}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &3520376014818067657
 GameObject:
   m_ObjectHideFlags: 0
@@ -1821,7 +1752,6 @@ GameObject:
   - component: {fileID: 2177452307628385946}
   - component: {fileID: 2473011352586661126}
   - component: {fileID: 1238770533702887595}
-  - component: {fileID: 6052628768176397746}
   m_Layer: 0
   m_Name: Tooth 1
   m_TagString: Untagged
@@ -2257,28 +2187,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3534082192618466430}
   m_Mesh: {fileID: 0}
---- !u!64 &6052628768176397746
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3534082192618466430}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &4051335362496893821
 GameObject:
   m_ObjectHideFlags: 0
@@ -2292,7 +2200,6 @@ GameObject:
   - component: {fileID: 6623769049161675555}
   - component: {fileID: 5706845947903151418}
   - component: {fileID: 4324654089450322670}
-  - component: {fileID: 3330431663986121038}
   m_Layer: 0
   m_Name: Tooth 4
   m_TagString: Untagged
@@ -2728,28 +2635,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4051335362496893821}
   m_Mesh: {fileID: 0}
---- !u!64 &3330431663986121038
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4051335362496893821}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &4447081098908511385
 GameObject:
   m_ObjectHideFlags: 0
@@ -2763,7 +2648,6 @@ GameObject:
   - component: {fileID: 9146484455839358271}
   - component: {fileID: 7976763052339203585}
   - component: {fileID: 423007694512516221}
-  - component: {fileID: 8284223768083545828}
   m_Layer: 0
   m_Name: PolyShape
   m_TagString: Untagged
@@ -3644,28 +3528,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4447081098908511385}
   m_Mesh: {fileID: 0}
---- !u!64 &8284223768083545828
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4447081098908511385}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &4579011363724165348
 GameObject:
   m_ObjectHideFlags: 0
@@ -3679,7 +3541,6 @@ GameObject:
   - component: {fileID: 9166107475163447800}
   - component: {fileID: 4854219643983271366}
   - component: {fileID: 3703330229095080048}
-  - component: {fileID: 343649964076608692}
   m_Layer: 0
   m_Name: Tooth 2
   m_TagString: Untagged
@@ -4115,28 +3976,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4579011363724165348}
   m_Mesh: {fileID: 0}
---- !u!64 &343649964076608692
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4579011363724165348}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &5455818716065877450
 GameObject:
   m_ObjectHideFlags: 0
@@ -4150,7 +3989,6 @@ GameObject:
   - component: {fileID: 4714633423380722147}
   - component: {fileID: 5058840375283579635}
   - component: {fileID: 6466398490664413386}
-  - component: {fileID: 1962496294421342992}
   m_Layer: 0
   m_Name: Split
   m_TagString: Untagged
@@ -4840,28 +4678,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5455818716065877450}
-  m_Mesh: {fileID: 0}
---- !u!64 &1962496294421342992
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5455818716065877450}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
   m_Mesh: {fileID: 0}
 --- !u!1 &6336588665374722797
 GameObject:
@@ -7038,7 +6854,6 @@ GameObject:
   - component: {fileID: 2354492913955859775}
   - component: {fileID: 8386765773457147555}
   - component: {fileID: 4481030120520529365}
-  - component: {fileID: 1612459027008372317}
   m_Layer: 0
   m_Name: BackThroatLighterPart
   m_TagString: Untagged
@@ -7789,28 +7604,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7450277671530209852}
-  m_Mesh: {fileID: 0}
---- !u!64 &1612459027008372317
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7450277671530209852}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
   m_Mesh: {fileID: 0}
 --- !u!1 &8350709498356902503
 GameObject:
@@ -9768,7 +9561,6 @@ GameObject:
   - component: {fileID: 4832975957339762193}
   - component: {fileID: 3463009238732967058}
   - component: {fileID: 1693788955142601102}
-  - component: {fileID: 2738223278931344579}
   - component: {fileID: 9072227072602355866}
   m_Layer: 0
   m_Name: BottomLip
@@ -12115,28 +11907,6 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9024848246489661574}
-  m_Mesh: {fileID: 0}
---- !u!64 &2738223278931344579
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9024848246489661574}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
   m_Mesh: {fileID: 0}
 --- !u!114 &9072227072602355866
 MonoBehaviour:
