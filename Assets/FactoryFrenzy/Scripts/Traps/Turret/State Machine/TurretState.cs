@@ -16,12 +16,12 @@ public class TurretState
 
   public virtual void EnterState()
   {
-    //Debug.Log("Entering state: " + this.GetType().Name);
+    //Logger.Log("Entering state: " + this.GetType().Name);
   }
 
   public virtual void ExitState()
   {
-    //Debug.Log("Exiting state: " + this.GetType().Name);
+    //Logger.Log("Exiting state: " + this.GetType().Name);
   }
 
   public virtual void FrameUpdate() { }

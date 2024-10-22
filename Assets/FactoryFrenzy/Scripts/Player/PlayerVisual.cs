@@ -4,17 +4,17 @@ public class PlayerVisual : MonoBehaviour
 {
   [SerializeField] private MeshRenderer _bodyMeshRenderer;
   [SerializeField] private MeshRenderer _backpackMeshRenderer;
-  private Material material;
+  private Material _material;
 
   private void Awake()
   {
-    material = new Material(_bodyMeshRenderer.material);
-    _bodyMeshRenderer.material = material;
-    _backpackMeshRenderer.material = material;
+    _material = new Material(_bodyMeshRenderer.material);
+    _bodyMeshRenderer.material = _material;
+    _backpackMeshRenderer.material = _material;
   }
 
   public void SetPlayerColor(Color color)
   {
-    material.color = color;
+    _material.color = color;
   }
 }

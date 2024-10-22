@@ -209,6 +209,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Platform Start
       objectReference: {fileID: 0}
+    - target: {fileID: 5625156941300102284, guid: 2ee7f6e77dd8b6a4083726485da5b624,
+        type: 3}
+      propertyPath: _drawGizmos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5625156941300102284, guid: 2ee7f6e77dd8b6a4083726485da5b624,
+        type: 3}
+      propertyPath: _gizmoColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5625156941300102284, guid: 2ee7f6e77dd8b6a4083726485da5b624,
+        type: 3}
+      propertyPath: _gizmoColor.g
+      value: 0.75294113
+      objectReference: {fileID: 0}
+    - target: {fileID: 5625156941300102284, guid: 2ee7f6e77dd8b6a4083726485da5b624,
+        type: 3}
+      propertyPath: _gizmoColor.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6581443949971158542, guid: 2ee7f6e77dd8b6a4083726485da5b624,
         type: 3}
       propertyPath: m_LocalPosition.x

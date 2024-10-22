@@ -22,11 +22,17 @@ public class LobbyMessageUI : MonoBehaviour, IHidable
   private void Start()
   {
     FactoryFrenzyMultiplayer.Instance.OnFailedToJoinGame += FactoryFrenzyGameManager_OnFailedToJoinGame;
+    FactoryFrenzyMultiplayer.Instance.OnTryingToJoinGame += FactoryFrenzyGameManager_OnTryingToJoinGame;
     FactoryFrenzyLobby.Instance.OnCreateLobbyStarted += FactoryFrenzyLobby_OnCreateLobbyStarted;
     FactoryFrenzyLobby.Instance.OnCreateLobbyFailed += FactoryFrenzyLobby_OnCreateLobbyFailed;
     FactoryFrenzyLobby.Instance.OnJoinFailed += FactoryFrenzyLobby_OnJoinFailed;
     FactoryFrenzyLobby.Instance.OnJoinStarted += FactoryFrenzyLobby_OnJoinStarted;
     FactoryFrenzyLobby.Instance.OnQuickJoinFailed += FactoryFrenzyLobby_OnQuickJoinFailed;
+    Hide();
+  }
+
+  private void FactoryFrenzyGameManager_OnTryingToJoinGame(object sender, EventArgs e)
+  {
     Hide();
   }
 
@@ -87,6 +93,7 @@ public class LobbyMessageUI : MonoBehaviour, IHidable
   private void OnDestroy()
   {
     FactoryFrenzyMultiplayer.Instance.OnFailedToJoinGame -= FactoryFrenzyGameManager_OnFailedToJoinGame;
+    FactoryFrenzyMultiplayer.Instance.OnTryingToJoinGame -= FactoryFrenzyGameManager_OnTryingToJoinGame;
     FactoryFrenzyLobby.Instance.OnCreateLobbyStarted -= FactoryFrenzyLobby_OnCreateLobbyStarted;
     FactoryFrenzyLobby.Instance.OnCreateLobbyFailed -= FactoryFrenzyLobby_OnCreateLobbyFailed;
     FactoryFrenzyLobby.Instance.OnJoinFailed -= FactoryFrenzyLobby_OnJoinFailed;

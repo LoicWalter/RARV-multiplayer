@@ -13,20 +13,24 @@ using Unity.Services.Relay.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(DontDestroyOnLoad))]
 public class FactoryFrenzyLobby : MonoBehaviour
 {
   private const string KEY_RELAY_JOIN_CODE = "relayJoinCode";
+  private const string KEY_MAP_NAME = "mapName";
 
   public static FactoryFrenzyLobby Instance { get; private set; }
   private Lobby _joinedLobby;
   public string LobbyName => _joinedLobby.Name;
   public string LobbyCode => _joinedLobby.LobbyCode;
+  public string MapName => GetMapName();
 
   public event EventHandler OnCreateLobbyStarted;
   public event EventHandler OnCreateLobbyFailed;
   public event EventHandler OnJoinStarted;
   public event EventHandler OnJoinFailed;
   public event EventHandler OnQuickJoinFailed;
+  public event EventHandler OnMapNameChanged;
   public event EventHandler<LobbyListChangedEventArgs> OnLobbyListChanged;
 
   public class LobbyListChangedEventArgs : EventArgs
@@ -37,10 +41,11 @@ public class FactoryFrenzyLobby : MonoBehaviour
   private float _heartbeatTimer = 0f;
   private float _listLobbiesTimer = 0f;
 
-  private void Awake()
+  private async void Awake()
   {
     Instance = this;
-    InitializeUnityAuthentication();
+    await InitializeUnityAuthentication();
+    FactoryFrenzyMapManager.Instance.InitializeLobbyFunction();
   }
 
   private void Update()
@@ -102,17 +107,18 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (LobbyServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
     }
   }
 
-  private async void InitializeUnityAuthentication()
+  private async Task InitializeUnityAuthentication()
   {
     if (UnityServices.State != ServicesInitializationState.Initialized)
     {
       InitializationOptions initializationOptions = new();
-      initializationOptions.SetProfile(UnityEngine.Random.Range(0, 1000000).ToString());
-      await UnityServices.InitializeAsync();
+      var profile = Guid.NewGuid().ToString()[..8];
+      initializationOptions.SetProfile(profile);
+      await UnityServices.InitializeAsync(initializationOptions);
       await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
   }
@@ -135,7 +141,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (RelayServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       return default;
     }
   }
@@ -158,7 +164,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (RelayServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       return default;
     }
   }
@@ -181,7 +187,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (RelayServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       return default;
     }
   }
@@ -200,15 +206,23 @@ public class FactoryFrenzyLobby : MonoBehaviour
     OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);
     try
     {
-      _joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, FactoryFrenzyMultiplayer.MAX_PLAYER_AMOUNT, new CreateLobbyOptions { IsPrivate = isPrivate });
+      _joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, FactoryFrenzyMultiplayer.MAX_PLAYER_AMOUNT,
+      new CreateLobbyOptions
+      {
+        IsPrivate = isPrivate,
+        Data = new Dictionary<string, DataObject>
+        {
+          { KEY_MAP_NAME, new DataObject(DataObject.VisibilityOptions.Member, FactoryFrenzyMapManager.Instance.SelectedMap) }
+        }
+      });
 
       Allocation allocation = await AllocateRelay();
       string relayJoinCode = await GetRelayJoinCode(allocation);
-      await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+      _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
       {
         Data = new Dictionary<string, DataObject>
         {
-          { KEY_RELAY_JOIN_CODE, new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) }
+          { KEY_RELAY_JOIN_CODE, new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) },
         }
       });
       NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
@@ -218,7 +232,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (LobbyServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       OnCreateLobbyFailed?.Invoke(this, EventArgs.Empty);
     }
   }
@@ -235,14 +249,14 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (LobbyServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       OnQuickJoinFailed?.Invoke(this, EventArgs.Empty);
     }
   }
 
   public async void JoinByCode(string code)
   {
-    Debug.Log($"Joining lobby with code: {code}");
+    Logger.Log($"Joining lobby with code: {code}");
     OnJoinStarted?.Invoke(this, EventArgs.Empty);
     try
     {
@@ -252,7 +266,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (LobbyServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       OnJoinFailed?.Invoke(this, EventArgs.Empty);
     }
   }
@@ -268,7 +282,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
     }
     catch (LobbyServiceException e)
     {
-      Debug.LogError(e);
+      Logger.LogError(e.Message);
       OnJoinFailed?.Invoke(this, EventArgs.Empty);
     }
   }
@@ -291,7 +305,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
       }
       catch (LobbyServiceException e)
       {
-        Debug.LogError(e);
+        Logger.LogError(e.Message);
       }
     }
   }
@@ -307,7 +321,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
       }
       catch (LobbyServiceException e)
       {
-        Debug.LogError(e);
+        Logger.LogError(e.Message);
       }
     }
   }
@@ -322,7 +336,7 @@ public class FactoryFrenzyLobby : MonoBehaviour
       }
       catch (LobbyServiceException e)
       {
-        Debug.LogError(e);
+        Logger.LogError(e.Message);
       }
     }
   }
@@ -330,5 +344,42 @@ public class FactoryFrenzyLobby : MonoBehaviour
   public Lobby GetJoinedLobby()
   {
     return _joinedLobby;
+  }
+
+  private string GetMapName()
+  {
+    if (_joinedLobby == null || !_joinedLobby.Data.ContainsKey(KEY_MAP_NAME))
+    {
+      return string.Empty;
+    }
+    return GetJoinedLobby().Data[KEY_MAP_NAME].Value;
+  }
+
+  public async void SetMapName(string mapName)
+  {
+    try
+    {
+      Logger.Log($"Setting map name to: {mapName}");
+      _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions
+      {
+        Data = new Dictionary<string, DataObject>
+        {
+          { KEY_MAP_NAME, new DataObject(DataObject.VisibilityOptions.Member, mapName) }
+        }
+      });
+
+      OnMapNameChanged?.Invoke(this, EventArgs.Empty);
+
+      Logger.Log($"Map name set to: {GetJoinedLobby().Data[KEY_MAP_NAME].Value}");
+    }
+    catch (LobbyServiceException e)
+    {
+      Logger.LogError(e.Message);
+    }
+  }
+
+  private void OnDestroy()
+  {
+    FactoryFrenzyMapManager.Instance.DesinitializeLobbyFunction();
   }
 }
