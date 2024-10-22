@@ -7,6 +7,8 @@ using UnityEngine.Rendering;
 
 public class EndGameWaiting : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem _CelebrateEffectLeft;
+    [SerializeField] private ParticleSystem _CelebrateEffectRight;
     void OnTriggerEnter(Collider other){
         if(other.transform.root.CompareTag("Player")){
 
@@ -16,6 +18,10 @@ public class EndGameWaiting : MonoBehaviour
                 playerController.playerInput.enabled = false;
                 playerController.enabled = false;
                 playerController.freeCamera.SetActive(true);
+
+                //Active effects
+                _CelebrateEffectRight.Play();
+                _CelebrateEffectLeft.Play();
 
                 FactoryFrenzyGameManager.Instance.AddPlayerRank(playerController);
 
