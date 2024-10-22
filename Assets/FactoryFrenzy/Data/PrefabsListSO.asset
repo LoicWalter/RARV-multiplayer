@@ -18,4 +18,5 @@ MonoBehaviour:
   - {fileID: 7169250305970618073, guid: bf2bbe1de2c6ca745b4c201a1e3dd376, type: 3}
   - {fileID: 7884820992609952247, guid: cf46584a85125a54a9f99a271efd3d93, type: 3}
   - {fileID: 4652329573806549489, guid: 2ee7f6e77dd8b6a4083726485da5b624, type: 3}
+  - {fileID: 4652329573806549489, guid: cb393791a18ada94eb066a003dd9bcab, type: 3}
   _startPlatformPrefabName: Platform Start

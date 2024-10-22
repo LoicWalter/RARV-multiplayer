@@ -52,7 +52,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
   public Vector3 RespawnPos;
-  private float LimitY = -5f;
+
 
 
   [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
@@ -65,6 +65,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public Transform AimPoint { get; private set; }
   [Tooltip("The player's visual representation.")]
   [SerializeField] private PlayerVisual _playerVisual;
+  [Tooltip("The Y limit at which the player will respawn.")]
+  [SerializeField] private float _limitY = -5f;
   private Vector3 _currentVelocity;
   private CinemachineVirtualCamera _virtualCamera;
 
@@ -114,10 +116,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-
-    Cursor.lockState = CursorLockMode.Locked;
-    Cursor.visible = false;
-
     RespawnPos = transform.position;
 
     OnNetworkSpawn();
@@ -133,7 +131,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     {
       Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
     }
-}
+  }
 
   private void FixedUpdate()
   {
@@ -141,8 +139,9 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     Move(_moveDirection);
   }
 
-  private void RespawnPlayerAt(){
-    if(transform.position.y < LimitY) 
+  private void RespawnPlayerAt()
+  {
+    if (transform.position.y < _limitY)
     {
       transform.position = RespawnPos;
     }
