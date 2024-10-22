@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e51fb8f6a1d6a7547a5f4c21299781d8, type: 2}
+  - {fileID: 2100000, guid: bc162a8ede4465a46aa9ee4096cc52af, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +99,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6581443949971158542}
   - component: {fileID: 1417770502050284683}
+  - component: {fileID: 2940964702362492308}
   m_Layer: 0
   m_Name: Platform Checkpoint
   m_TagString: Untagged
@@ -156,12 +157,25 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2940964702362492308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4652329573806549489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80dcde986ff66634db927f6482862c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderer: {fileID: 8417264380321789813}
 --- !u!1001 &1012660308529904740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -243,6 +257,11 @@ PrefabInstance:
     - target: {fileID: 8887992336606756027, guid: 82d35bff2f214694fbd39c5151438478,
         type: 3}
       propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8996570304443273014, guid: 82d35bff2f214694fbd39c5151438478,
+        type: 3}
+      propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -51,6 +51,9 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
+  public Vector3 RespawnPos;
+  private float LimitY = -5f;
+
 
   [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
   public CinemachineVirtualCamera VirtualCameraPrefab { get; private set; }
@@ -111,6 +114,12 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
+
+    Cursor.lockState = CursorLockMode.Locked;
+    Cursor.visible = false;
+
+    RespawnPos = transform.position;
+
     OnNetworkSpawn();
   }
 
@@ -118,16 +127,25 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   {
     if (!IsOwner && !_forceIsOwner) return;
     GroundedCheck();
+    RespawnPlayerAt();
+
     if (Mouse.current.delta.ReadValue().magnitude > 0)
     {
       Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
     }
-  }
+}
 
   private void FixedUpdate()
   {
     if (!IsOwner && !_forceIsOwner) return;
     Move(_moveDirection);
+  }
+
+  private void RespawnPlayerAt(){
+    if(transform.position.y < LimitY) 
+    {
+      transform.position = RespawnPos;
+    }
   }
 
   private void OnDrawGizmos()
