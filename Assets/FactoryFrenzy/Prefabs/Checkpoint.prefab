@@ -62,7 +62,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: fb219dbf6caa3644baa804f7fcd52af1, type: 2}
+  - {fileID: 2100000, guid: 4f852717a395bbf4ea5a19e23c95bc07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4837,4 +4837,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 413d3ecdeaf11a0498ad3eaa28a56dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CheckpointFlagged: {fileID: 2100000, guid: 60a261ba7d09b6d4c840f705ea9d4ecf, type: 2}
+  CheckpointFlagged: {fileID: 2100000, guid: 54e4ac01b961a8a43878f6e42bd50488, type: 2}
