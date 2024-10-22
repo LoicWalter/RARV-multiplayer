@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7657586512722384255
 Transform:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716377947470211715}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 618b0e3f6c65dd247a4a016150006c57, type: 3}
   m_Name: 
@@ -322,6 +322,7 @@ MonoBehaviour:
   CameraFollowPoint: {fileID: 173117137537652221}
   <AimPoint>k__BackingField: {fileID: 8975861121519993200}
   _playerVisual: {fileID: 5903046525639243572}
+  _limitY: -5
   playerInput: {fileID: 9220243587769624271}
 --- !u!114 &8251395394255714634
 MonoBehaviour:
