@@ -21,6 +21,7 @@ public class HostDisconnectedUI : MonoBehaviour, IHidable
 
   private void NetworkManager_OnClientDisconnectedCallback(ulong clientId)
   {
+    Logger.Log("Client disconnected");
     if (clientId == NetworkManager.ServerClientId)
     {
       Show();

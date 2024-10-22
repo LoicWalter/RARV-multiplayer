@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 216cdd4f1e7f41c49bd38268afea96ee, type: 3}
+  m_Name: PrefabsListSO
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - {fileID: 4270731095375607592, guid: b6a8a58b09615da4fa6bd1ac020acfd4, type: 3}
+  - {fileID: 516077371111695042, guid: 1f4e4a8d311b78f4585a7fe35ea8e007, type: 3}
+  - {fileID: 7169250305970618073, guid: bf2bbe1de2c6ca745b4c201a1e3dd376, type: 3}
+  - {fileID: 7884820992609952247, guid: cf46584a85125a54a9f99a271efd3d93, type: 3}
+  - {fileID: 4652329573806549489, guid: 2ee7f6e77dd8b6a4083726485da5b624, type: 3}
+  - {fileID: 4652329573806549489, guid: cb393791a18ada94eb066a003dd9bcab, type: 3}
+  _startPlatformPrefabName: Platform Start

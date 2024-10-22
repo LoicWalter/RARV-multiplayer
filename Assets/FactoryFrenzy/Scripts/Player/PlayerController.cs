@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
@@ -51,7 +52,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
   public Vector3 RespawnPos;
-  private float LimitY = -5f;
+
 
 
   [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
@@ -67,6 +68,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public Transform AimPoint { get; private set; }
   [Tooltip("The player's visual representation.")]
   [SerializeField] private PlayerVisual _playerVisual;
+  [Tooltip("The Y limit at which the player will respawn.")]
+  [SerializeField] private float _limitY = -5f;
   private Vector3 _currentVelocity;
   private CinemachineVirtualCamera _virtualCamera;
 
@@ -98,6 +101,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
 
+    FactoryFrenzyGameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+    FactoryFrenzyGameManager.Instance.SetLocalPlayerReady();
     playerInput.enabled = true;
   }
 
@@ -114,10 +119,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-
-    Cursor.lockState = CursorLockMode.Locked;
-    Cursor.visible = false;
-
     RespawnPos = transform.position;
 
     OnNetworkSpawn();
@@ -133,7 +134,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     {
       Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
     }
-}
+  }
 
   private void FixedUpdate()
   {
@@ -141,8 +142,9 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     Move(_moveDirection);
   }
 
-  private void RespawnPlayerAt(){
-    if(transform.position.y < LimitY) 
+  private void RespawnPlayerAt()
+  {
+    if (transform.position.y < _limitY)
     {
       transform.position = RespawnPos;
     }
@@ -157,30 +159,42 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   #endregion
 
+  #region Event Handlers
+
+  private void GameManager_OnGameStateChanged(object sender, EventArgs e)
+  {
+    if (FactoryFrenzyGameManager.Instance.IsPlaying())
+    {
+      playerInput.enabled = true;
+    }
+    else
+    {
+      playerInput.enabled = false;
+    }
+  }
+
+  #endregion
+
   #region Input Methods
 
   public void OnMove(CallbackContext context)
   {
-    Debug.Log("Move performed");
     _moveDirection = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
   }
 
   public void OnRun(CallbackContext context)
   {
-    Debug.Log("Run performed");
     IsRunning = context.ReadValueAsButton();
   }
 
   public void OnJump(CallbackContext context)
   {
-    Debug.Log("Jump performed");
     Jump();
   }
 
   //? Ne fonctionne pas pour une raison inconnue => n'est pas appelée
   public void OnLook(CallbackContext context)
   {
-    Debug.Log("Look performed");
     Rotate(new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y));
   }
 

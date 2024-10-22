@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// The game manager for the Factory Frenzy game.
@@ -15,6 +16,8 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
 
   public event EventHandler OnGameStateChanged;
   public event EventHandler OnLocalPlayerReadyChanged;
+
+  private StartPlatform _startPlatform;
 
   public enum GameState
   {
@@ -46,11 +49,6 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     {
       Instance = this;
     }
-    else
-    {
-      Destroy(Instance.gameObject);
-      Instance = this;
-    }
   }
 
   private void Update()
@@ -61,7 +59,11 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
       case GameState.WaitingToStart:
         break;
       case GameState.Countdown:
-        UpdateCountdown();
+        CountdownDuration.Value -= Time.deltaTime;
+        if (CountdownDuration.Value < 0f)
+        {
+          _currentGameState.Value = GameState.Playing;
+        }
         break;
       case GameState.Playing:
         break;
@@ -83,12 +85,31 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     if (IsServer)
     {
       NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+      FactoryFrenzyMapGenerator.Instance.OnMapGenerated += MapGenerator_OnMapGenerated;
     }
   }
 
   #endregion
 
   #region Event Handlers
+
+  /// <summary>
+  /// Spawns the player objects for each connected client when the map is generated.
+  /// </summary>
+  /// <param name="sender"></param>
+  /// <param name="e"></param>
+  private void MapGenerator_OnMapGenerated(object sender, EventArgs e)
+  {
+    Logger.Log("Spawning player objects...");
+    Logger.Log("Current game state: " + _currentGameState.Value);
+    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+    {
+      Vector3 randomPosition = _startPlatform.GetRandomUnusedPlateformSpawnPoint().position;
+      Transform playerTransform = Instantiate(_playerPrefab, randomPosition, Quaternion.identity);
+      playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+    }
+    Logger.Log("Player objects spawned.");
+  }
 
   /// <summary>
   /// Spawns the player objects for each connected client when the scene is loaded.
@@ -107,11 +128,7 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
   /// </param>
   private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
   {
-    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-    {
-      Transform playerTransform = Instantiate(_playerPrefab);
-      playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-    }
+    FactoryFrenzyMapGenerator.Instance.GenerateMap(FactoryFrenzyMapManager.Instance.LevelObjects);
   }
 
   /// <summary>
@@ -125,30 +142,41 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
   /// </param>
   private void State_OnValueChanged(GameState previousState, GameState newState)
   {
+    Logger.Log("Called in event // Game state changed: " + newState);
     OnGameStateChanged?.Invoke(this, EventArgs.Empty);
   }
-
-  /// <summary>
-  /// Handles the event when the local player's ready state changes.
-  /// </summary>
-  // private void GameInput_OnPlayerReadyChanged()
-  // {
-  //   if (_currentGameState.Value != GameState.WaitingToStart) return;
-  //   IsLocalPlayerReady = true;
-  //   SetPlayerReadyServerRpc();
-  //   OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
-  // }
 
   #endregion
 
   #region Public Methods
+
+  public void SetStartPlatform(StartPlatform startPlatform)
+  {
+    _startPlatform = startPlatform;
+  }
+
+  public void SetLocalPlayerReady()
+  {
+    if (_currentGameState.Value == GameState.WaitingToStart)
+    {
+      IsLocalPlayerReady = true;
+      OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
+
+      SetPlayerReadyServerRpc();
+    }
+  }
+
+  public GameState GetCurrentGameState()
+  {
+    return _currentGameState.Value;
+  }
 
   public void SetGameState(GameState state)
   {
     _currentGameState.Value = state;
   }
 
-  public bool IsCountdownActive()
+  public bool IsCountdown()
   {
     return _currentGameState.Value == GameState.Countdown;
   }
@@ -168,39 +196,42 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     return _currentGameState.Value == GameState.WaitingToStart;
   }
 
+  public float GetCountdownDuration()
+  {
+    return CountdownDuration.Value;
+  }
+
   #endregion
 
   #region Server Methods
 
-  // [ServerRpc(RequireOwnership = false)]
-  // private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
-  // {
-  //   _playerReadyStates[serverRpcParams.Receive.SenderClientId] = true;
-  //   bool allPlayersReady = true;
-  //   foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-  //   {
-  //     if (!_playerReadyStates.ContainsKey(clientId) || !_playerReadyStates[clientId])
-  //     {
-  //       allPlayersReady = false;
-  //       break;
-  //     }
-  //   }
-
-  //   if (allPlayersReady)
-  //   {
-  //     SetGameState(GameState.Countdown);
-  //   }
-  // }
-
-  private void UpdateCountdown()
+  [ServerRpc(RequireOwnership = false)]
+  private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
   {
-    if (CountdownDuration.Value <= 0)
+    _playerReadyStates[serverRpcParams.Receive.SenderClientId] = true;
+    bool allPlayersReady = true;
+    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
     {
-      SetGameState(GameState.Playing);
-      return;
+      if (!_playerReadyStates.ContainsKey(clientId) || !_playerReadyStates[clientId])
+      {
+        allPlayersReady = false;
+        break;
+      }
     }
 
-    CountdownDuration.Value -= Time.deltaTime;
+    Logger.Log("All players ready: " + allPlayersReady);
+
+    if (allPlayersReady)
+    {
+      StartCoroutine(StartCountdown());
+    }
+  }
+
+  private IEnumerator StartCountdown()
+  {
+    yield return new WaitForSeconds(1f);
+    CountdownDuration.Value = 3f;
+    SetGameState(GameState.Countdown);
   }
 
   public void AddPlayerRank(PlayerController playerController)

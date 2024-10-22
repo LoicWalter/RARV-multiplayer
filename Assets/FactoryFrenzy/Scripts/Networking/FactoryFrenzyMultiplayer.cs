@@ -6,6 +6,7 @@ using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(DontDestroyOnLoad))]
 public class FactoryFrenzyMultiplayer : NetworkBehaviour
 {
   public const int MAX_PLAYER_AMOUNT = 4;
