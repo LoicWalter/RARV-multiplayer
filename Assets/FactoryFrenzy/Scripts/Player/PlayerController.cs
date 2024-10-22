@@ -57,6 +57,9 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
   public CinemachineVirtualCamera VirtualCameraPrefab { get; private set; }
+  [Tooltip("The camera used after crossing the end line.")]
+  [SerializeField] public GameObject freeCamera;
+
   [Tooltip("The point at which the camera will look.")]
   public Transform CameraLookPoint;
   [Tooltip("The point at which the camera will follow.")]
