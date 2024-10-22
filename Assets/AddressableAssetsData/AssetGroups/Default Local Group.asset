@@ -17,16 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 6815561c88192bc4b8b3344b5a3462a9
   m_SerializeEntries:
-  - m_GUID: 2699618de50e6804b97bdf7fb48564bc
-    m_Address: PLA360
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: facee318fb43b724aa1bad024fad2e8f
-    m_Address: PLA520
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2ee7f6e77dd8b6a4083726485da5b624
     m_Address: PLA START
     m_ReadOnly: 0
