@@ -322,6 +322,7 @@ MonoBehaviour:
   CameraFollowPoint: {fileID: 173117137537652221}
   <AimPoint>k__BackingField: {fileID: 8975861121519993200}
   _playerVisual: {fileID: 5903046525639243572}
+  _limitY: -5
   playerInput: {fileID: 9220243587769624271}
 --- !u!114 &8251395394255714634
 MonoBehaviour:
@@ -495,6 +496,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 557310356159000700}
     m_Modifications:
+    - target: {fileID: 3441147985635113873, guid: 8d4cddd5524c6f5498804492668caf19,
+        type: 3}
+      propertyPath: _bodyMeshRenderer
+      value: 
+      objectReference: {fileID: 1419626141477284444}
     - target: {fileID: 3569161600476046413, guid: 8d4cddd5524c6f5498804492668caf19,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -545,6 +551,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6573230747029647259, guid: 8d4cddd5524c6f5498804492668caf19,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6906739874713298222, guid: 8d4cddd5524c6f5498804492668caf19,
         type: 3}
       propertyPath: m_Name
@@ -555,6 +566,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d4cddd5524c6f5498804492668caf19, type: 3}
+--- !u!23 &1419626141477284444 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7897407340190426873, guid: 8d4cddd5524c6f5498804492668caf19,
+    type: 3}
+  m_PrefabInstance: {fileID: 9091285877266599077}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5738300362148194536 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3569161600476046413, guid: 8d4cddd5524c6f5498804492668caf19,

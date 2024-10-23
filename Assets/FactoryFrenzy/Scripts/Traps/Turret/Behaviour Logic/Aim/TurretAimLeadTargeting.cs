@@ -41,13 +41,10 @@ public class TurretAimLeadTargeting : TurretAimSOBase
     // Calculating the direction to the future position
     Vector3 leadDirection = futurePosition - transform.position;
 
-    // Rotate the turret to look at the player
-    Quaternion lookRotation = Quaternion.LookRotation(leadDirection);
-    transform.rotation = lookRotation;
-
-    SetLineOfSight(leadDirection);
-
-    TriggerShot(transform.forward, leadDirection);
+    if (RotateTo(leadDirection))
+    {
+      TriggerShot();
+    }
   }
 
   public override void DoPhysicsLogic()

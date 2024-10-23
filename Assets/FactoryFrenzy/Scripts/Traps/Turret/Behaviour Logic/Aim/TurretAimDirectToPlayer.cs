@@ -28,13 +28,10 @@ public class TurretAimDirectToPlayer : TurretAimSOBase
     Vector3 aimAt = playerToAimAt.AimPoint.position;
     Vector3 direction = aimAt - transform.position;
 
-    // Rotate the turret to look at the player
-    Quaternion lookRotation = Quaternion.LookRotation(direction);
-    transform.rotation = lookRotation;
-
-    SetLineOfSight(direction);
-
-    TriggerShot(transform.forward, direction);
+    if (RotateTo(direction))
+    {
+      TriggerShot();
+    }
   }
 
   public override void DoPhysicsLogic()

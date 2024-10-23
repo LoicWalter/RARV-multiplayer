@@ -29,8 +29,6 @@ public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
   public override void DoFrameLogic()
   {
     base.DoFrameLogic();
-    Shoot();
-    turret.StateMachine.ChangeState(turret.AimState);
   }
 
   public override void DoPhysicsLogic()
@@ -51,11 +49,11 @@ public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
   /// <summary>
   ///  Shoots the bullet and destroys it after a certain time.
   /// </summary>
-  public void Shoot()
+  public override void Shoot()
   {
     GameObject bullet = Instantiate(_bulletPrefab, turret.BulletSpawnPoint.position, Quaternion.identity);
     var bulletRb = bullet.GetComponent<Rigidbody>();
-    bulletRb.AddForce(bulletRb.mass * BulletSpeed * turret.BulletSpawnPoint.forward, ForceMode.Impulse);
+    bulletRb.AddForce(bulletRb.mass * BulletSpeed * turret.TurretCannon.transform.right, ForceMode.Impulse);
     Destroy(bullet, _timeTillDestroy);
   }
 }

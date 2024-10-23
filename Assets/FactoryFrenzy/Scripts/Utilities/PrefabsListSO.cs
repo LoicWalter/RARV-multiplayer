@@ -8,7 +8,7 @@ public class PrefabsListSO : ScriptableObject
   [SerializeField] private GameObject[] _prefabs;
   [SerializeField] private string _startPlatformPrefabName;
 
-  [SerializeField] private Dictionary<string, GameObject> _prefabsDictionary;
+  private Dictionary<string, GameObject> _prefabsDictionary;
 
   public GameObject GetPrefab(string prefabName)
   {

@@ -30,9 +30,15 @@ public class TurretAttackSOBase : ScriptableObject
     ResetValues();
   }
 
-  public virtual void DoFrameLogic() { }
+  public virtual void DoFrameLogic()
+  {
+    Shoot();
+    turret.StateMachine.ChangeState(turret.AimState);
+  }
 
   public virtual void DoPhysicsLogic() { }
 
   public virtual void ResetValues() { }
+
+  public virtual void Shoot() { }
 }

@@ -25,12 +25,19 @@ public class Turret : MonoBehaviour
   [Tooltip("Turret bullet spawn point.")]
   public Transform BulletSpawnPoint;
 
+  [Header("Scriptable Objects")]
   [Tooltip("The behavior of the turret when it is idle.")]
   [SerializeField] private TurretIdleSOBase TurretIdleBase;
   [Tooltip("The behavior of the turret when it is attacking.")]
   [SerializeField] private TurretAttackSOBase TurretAttackBase;
   [Tooltip("The behavior of the turret when it is aiming.")]
   [SerializeField] private TurretAimSOBase TurretAimBase;
+
+  [Header("Animations")]
+  [Tooltip("The animator of the turret.")]
+  public Animator Animator;
+  [Tooltip("The turret's cannon. Used to rotate the turret to look up and down.")]
+  public GameObject TurretCannon;
 
   public TurretIdleSOBase TurretIdleBaseInstance { get; set; }
   public TurretAttackSOBase TurretAttackBaseInstance { get; set; }

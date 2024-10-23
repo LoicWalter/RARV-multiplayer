@@ -101,8 +101,11 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
 
-    FactoryFrenzyGameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
-    FactoryFrenzyGameManager.Instance.SetLocalPlayerReady();
+    if (FactoryFrenzyGameManager.Instance != null)
+    {
+      FactoryFrenzyGameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
+      FactoryFrenzyGameManager.Instance.SetLocalPlayerReady();
+    }
     playerInput.enabled = true;
   }
 
@@ -112,8 +115,11 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   private void Start()
   {
-    PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
-    _playerVisual.SetPlayerColor(FactoryFrenzyMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+    if (FactoryFrenzyGameManager.Instance != null)
+    {
+      PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+      _playerVisual.SetPlayerColor(FactoryFrenzyMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+    }
   }
 
   private void Awake()

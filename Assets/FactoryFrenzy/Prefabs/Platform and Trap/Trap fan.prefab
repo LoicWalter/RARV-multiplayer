@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3461d394c5df1d640a034d2fdc07af79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pushForceMultiplier: 7
+  pushForceMultiplier: 30
 --- !u!1001 &3259483478685587982
 PrefabInstance:
   m_ObjectHideFlags: 0

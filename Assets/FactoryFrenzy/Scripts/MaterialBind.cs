@@ -4,46 +4,48 @@ using UnityEngine;
 
 public class MaterialBind : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _gameObjectToBindWith;
+  [SerializeField] private GameObject _gameObjectToBindWith;
 
-    // Start is called before the first frame update
-    void Start()
+  // Start is called before the first frame update
+  void Start()
+  {
+    BindMaterial();
+  }
+
+  // Permet au code de s'exécuter même lorsque des modifications sont faites dans l'éditeur
+  [ExecuteInEditMode]
+  private void OnValidate()
+  {
+    BindMaterial();
+  }
+
+  // Fonction pour bind le matériel
+  void BindMaterial()
+  {
+    if (_gameObjectToBindWith == null)
     {
-        BindMaterial();
+      Logger.LogWarning("Game Object To Bind With est null");
+      Logger.LogWarning(gameObject.name);
+      return;
     }
 
-    // Permet au code de s'exécuter même lorsque des modifications sont faites dans l'éditeur
-    [ExecuteInEditMode]
-    void OnValidate()
+    // Vérifie si _gameObjectToBindWith n'est pas null et a un Renderer
+    if (_gameObjectToBindWith.TryGetComponent(out Renderer targetRenderer))
     {
-        BindMaterial();
+      // Vérifie si l'objet actuel a également un Renderer
+      if (gameObject.TryGetComponent(out Renderer currentRenderer))
+      {
+        // Crée un nouvel instance du matériau pour ne pas affecter le matériau partagé
+        currentRenderer.material = new Material(targetRenderer.sharedMaterial);
+      }
+      else
+      {
+        Logger.LogWarning("Pas de Renderer sur l'objet actuel");
+      }
     }
-
-    // Fonction pour bind le matériel
-    void BindMaterial()
+    else
     {
-        // Vérifie si _gameObjectToBindWith n'est pas null et a un Renderer
-        if (_gameObjectToBindWith != null && _gameObjectToBindWith.GetComponent<Renderer>() != null)
-        {
-            Renderer targetRenderer = _gameObjectToBindWith.GetComponent<Renderer>();
-
-            // Vérifie si l'objet actuel a également un Renderer
-            if (this.GetComponent<Renderer>() != null)
-            {
-                Renderer currentRenderer = this.GetComponent<Renderer>();
-
-                // Crée un nouvel instance du matériau pour ne pas affecter le matériau partagé
-                currentRenderer.material = new Material(targetRenderer.sharedMaterial);
-            }
-            else
-            {
-                Debug.LogWarning("Pas de Renderer sur l'objet actuel");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Game Object To Bind With est null ou n'a pas de Renderer");
-        }
+      Logger.LogWarning("Game Object To Bind With est null ou n'a pas de Renderer");
     }
+  }
 }

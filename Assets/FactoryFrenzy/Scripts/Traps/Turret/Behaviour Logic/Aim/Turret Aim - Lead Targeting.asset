@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d15fa94326d24546a6700790232bd23, type: 3}
   m_Name: Turret Aim - Lead Targeting
   m_EditorClassIdentifier: 
-  AngleTolerance: 10
-  rotationSpeed: 15
+  _rotationSpeed: 10
+  _angleTolerance: 1
