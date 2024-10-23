@@ -1,19 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
   [SerializeField] private Button _playButton;
-  [SerializeField] private Button _addMapButton;
+  [SerializeField] private Button _importMapsButton;
   [SerializeField] private Button _quitButton;
-  [SerializeField] private ImportJsonUI _importJsonUI;
+  [SerializeField] private ImportErrorUI _importErrorUI;
 
   private void Awake()
   {
     _playButton.onClick.AddListener(StartGame);
-    _addMapButton.onClick.AddListener(AddMap);
+    _importMapsButton.onClick.AddListener(ImportMaps);
     _quitButton.onClick.AddListener(QuitGame);
-
   }
 
   private void StartGame()
@@ -21,9 +21,15 @@ public class MainMenuUI : MonoBehaviour
     Loader.Load(Loader.Scene.LobbyScene);
   }
 
-  private void AddMap()
+  private void ImportMaps()
   {
-    _importJsonUI.Show();
+    if (Importer.AddJSONFilesFromExplorer(out List<string> errorMessages))
+    {
+      return;
+    }
+
+    _importErrorUI.SetErrorText(string.Join("\n", errorMessages));
+    _importErrorUI.Show();
   }
 
   private void QuitGame()

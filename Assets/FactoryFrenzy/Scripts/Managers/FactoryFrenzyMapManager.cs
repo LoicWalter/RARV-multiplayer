@@ -11,12 +11,6 @@ public class FactoryFrenzyMapManager : MonoBehaviour
   public List<LevelObject> LevelObjects { get; private set; }
   public string SelectedMap { get; private set; }
 
-  public event EventHandler OnInvalidJsonInput;
-  public event EventHandler OnInvalidFileName;
-  public event EventHandler OnMapSaveError;
-
-  public event EventHandler<MapListChangedEventArgs> OnMapListChanged;
-
   public class MapListChangedEventArgs : EventArgs
   {
     public List<string> MapList;
@@ -53,35 +47,6 @@ public class FactoryFrenzyMapManager : MonoBehaviour
     {
       LoadMap(SelectedMap);
     }
-  }
-
-  public void SaveMap(string jsonInput, string fileName)
-  {
-    if (string.IsNullOrEmpty(jsonInput))
-    {
-      OnInvalidJsonInput?.Invoke(this, EventArgs.Empty);
-      return;
-    }
-
-    if (!Importer.TrySerialization<LevelObject>(jsonInput, out var obj))
-    {
-      OnInvalidJsonInput?.Invoke(this, EventArgs.Empty);
-      return;
-    }
-
-    if (string.IsNullOrEmpty(fileName))
-    {
-      OnInvalidFileName?.Invoke(this, EventArgs.Empty);
-      return;
-    }
-
-    if (!Importer.Save(obj, fileName, "Maps"))
-    {
-      OnMapSaveError?.Invoke(this, EventArgs.Empty);
-      return;
-    }
-
-    OnMapListChanged?.Invoke(this, new MapListChangedEventArgs { MapList = GetMapNames() });
   }
 
   public List<string> GetMapNames()

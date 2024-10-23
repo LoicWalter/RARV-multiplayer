@@ -18,14 +18,7 @@ public class MapSelectUI : MonoBehaviour, IHidable
   private void Start()
   {
     Hide();
-    FactoryFrenzyMapManager.Instance.OnMapListChanged += FactoryFrenzyMapManager_OnMapListChanged;
-
     UpdateMapList(FactoryFrenzyMapManager.Instance.GetMapNames());
-  }
-
-  private void FactoryFrenzyMapManager_OnMapListChanged(object sender, FactoryFrenzyMapManager.MapListChangedEventArgs e)
-  {
-    UpdateMapList(e.MapList);
   }
 
   public void Hide()
@@ -52,10 +45,5 @@ public class MapSelectUI : MonoBehaviour, IHidable
       mapTransform.gameObject.SetActive(true);
       mapTransform.GetComponent<MapListSingleUI>().SetMap(map);
     }
-  }
-
-  private void OnDestroy()
-  {
-    FactoryFrenzyMapManager.Instance.OnMapListChanged -= FactoryFrenzyMapManager_OnMapListChanged;
   }
 }

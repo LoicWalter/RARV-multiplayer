@@ -1,4 +1,4 @@
-Shader "Custom/ReplaceRedPixelsWithTransparency"
+Shader "Custom/DoubleSidedTransparent"
 {
     Properties
     {

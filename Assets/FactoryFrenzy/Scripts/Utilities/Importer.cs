@@ -149,35 +149,20 @@ public static class Importer
     }
   }
 
-  public static bool Save<T>(List<T> obj, string fileName, string pathName) where T : struct
+  public static bool TrySerialization<T>(string json) where T : struct
   {
-    try
-    {
-      string savePath = GetFullPath(fileName, ref pathName);
-      string json = JsonConvert.SerializeObject(obj);
-
-      if (!Directory.Exists(_streamingAssetsPath + "/" + pathName))
-      {
-        Directory.CreateDirectory(_streamingAssetsPath + "/" + pathName);
-      }
-
-      using (StreamWriter file = new StreamWriter(savePath))
-      {
-        file.Write(json);
-      }
-
-      return true;
-    }
-    catch (Exception e)
-    {
-      Logger.Log(e.Message);
-      return false;
-    }
+    return TrySerialization<T>(json, out _);
   }
 
   public static bool TrySerialization<T>(string json, out List<T> obj) where T : struct
   {
     obj = default;
+
+    if (string.IsNullOrEmpty(json) || json.Length < 2)
+    {
+      return false;
+    }
+
     try
     {
       obj = JsonConvert.DeserializeObject<List<T>>(json);
@@ -210,5 +195,67 @@ public static class Importer
       fileNames.Add(fileName[..^5]);
     }
     return fileNames;
+  }
+
+  public static bool AddJSONFilesFromExplorer(out List<string> errorMessages, string path = "")
+  {
+    errorMessages = new List<string>();
+    string[] paths = SFB.StandaloneFileBrowser.OpenFilePanel("Choose JSON files", path, "json", true);
+
+    foreach (string p in paths)
+    {
+      try
+      {
+        TryImportJSONFilesOrThrow<LevelObject>(p, path);
+      }
+      catch (Exception e)
+      {
+        Logger.LogError(e.Message);
+        errorMessages.Add("Failed to import file: " + p);
+      }
+    }
+
+    return errorMessages.Count == 0;
+  }
+
+  /// <summary>
+  /// Tries to import a JSON file, if it fails, it throws an exception.
+  /// </summary>
+  /// <typeparam name="T">
+  ///   The type of the object to import.
+  /// </typeparam>
+  /// <param name="filePath">
+  ///   The path to the file to import.
+  /// </param>
+  /// <param name="localPath">
+  ///   The relative path to save the file to.
+  /// </param>
+  /// <exception cref="FileAlreadyExistException"></exception>
+  /// <exception cref="FailedToCopyFileException"></exception>
+  /// <exception cref="FailedToSerializedException"></exception>
+  private static void TryImportJSONFilesOrThrow<T>(string filePath, string localPath) where T : struct
+  {
+    string fileName = Path.GetFileNameWithoutExtension(filePath);
+    string fullLocalPath = GetFullPath(fileName, ref localPath);
+    if (File.Exists(fullLocalPath))
+    {
+      throw new FileAlreadyExistException("File already exists");
+    }
+
+    if (!TrySerialization<T>(File.ReadAllText(filePath)))
+    {
+      throw new FailedToSerializedException("Failed to serialize file");
+    }
+
+    try
+    {
+      File.Copy(filePath, fullLocalPath);
+    }
+    catch (Exception)
+    {
+      throw new FailedToCopyFileException("Failed to copy file");
+    }
+
+    Logger.Log("File imported successfully");
   }
 }

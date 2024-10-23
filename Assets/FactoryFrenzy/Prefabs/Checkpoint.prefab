@@ -4838,8 +4838,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 413d3ecdeaf11a0498ad3eaa28a56dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _checkpointFlagged: {fileID: 2100000, guid: 54e4ac01b961a8a43878f6e42bd50488, type: 2}
-  _flagRenderer: {fileID: 9053385615149160002}
+  _CheckpointFlagged: {fileID: 0}
+  _FlagRenderer: {fileID: 0}
 --- !u!114 &247010604572209107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4852,3 +4852,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80dcde986ff66634db927f6482862c31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _meshRenderer: {fileID: 0}
