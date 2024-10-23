@@ -6,15 +6,15 @@ using UnityEngine;
 [RequireComponent(typeof(FlagColor))]
 public class Checkpoint : MonoBehaviour
 {
-  [SerializeField] private MeshRenderer _meshRenderer;
+  // [SerializeField] private MeshRenderer _meshRenderer;
   private List<PlayerController> _listPlayerActive = new();
-  private Material _materialActive;
+  // private Material _materialActive;
 
-  private void Awake()
-  {
-    _materialActive = new Material(_meshRenderer.material);
-    _meshRenderer.material = _materialActive;
-  }
+  // private void Awake()
+  // {
+  //   _materialActive = new Material(_meshRenderer.material);
+  //   _meshRenderer.material = _materialActive;
+  // }
 
   void OnTriggerEnter(Collider other)
   {
