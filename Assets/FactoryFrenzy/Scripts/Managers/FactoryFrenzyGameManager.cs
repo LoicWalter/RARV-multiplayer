@@ -242,7 +242,8 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
 
     Debug.Log("Player has finished the game in " + PlayerRanks.Count + " place.");
     
-    if (PlayerRanks.Count == NetworkManager.Singleton.ConnectedClientsList.Count - 1)
+    if (PlayerRanks.Count == 1)
+    //NetworkManager.Singleton.ConnectedClientsList.Count - 1)
     {
       SetGameState(GameState.GameOver);
     }
