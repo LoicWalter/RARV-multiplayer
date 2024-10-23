@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(FlagColor))]
 public class Checkpoint : MonoBehaviour
 {
   [SerializeField] private MeshRenderer _meshRenderer;
@@ -28,8 +29,8 @@ public class Checkpoint : MonoBehaviour
       _listPlayerActive.Add(playerController);
 
       //change color Active checkpoint
-      _materialActive.color = Color.green;
-      _materialActive.SetColor("_EmissionColor", Color.green);
+      //_materialActive.color = Color.green;
+      //_materialActive.SetColor("_EmissionColor", Color.green);
     }
   }
 }

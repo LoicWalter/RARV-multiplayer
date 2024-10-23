@@ -22,11 +22,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0f6826344350b4a4caeafc5cf1c082d0
-    m_Address: PLA80
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eac2e128ec83cff40ae9c74a5da924bc
     m_Address: PLA END
     m_ReadOnly: 0
