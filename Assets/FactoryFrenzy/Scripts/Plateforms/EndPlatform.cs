@@ -9,6 +9,12 @@ public class EndGameWaiting : MonoBehaviour
 {
     [SerializeField] private ParticleSystem _CelebrateEffectLeft;
     [SerializeField] private ParticleSystem _CelebrateEffectRight;
+    private AudioSource _audioSource;
+
+    void Awake(){
+        _audioSource = gameObject.GetComponent<AudioSource>();
+    }
+
     void OnTriggerEnter(Collider other){
         if(other.transform.root.CompareTag("Player")){
 
@@ -22,6 +28,7 @@ public class EndGameWaiting : MonoBehaviour
                 //Active effects
                 _CelebrateEffectRight.Play();
                 _CelebrateEffectLeft.Play();
+                _audioSource.Play();
 
                 FactoryFrenzyGameManager.Instance.AddPlayerRank(playerController);
 
