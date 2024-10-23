@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class GameOverUI : MonoBehaviour
 {
   [SerializeField] private Button _mainMenuButton;
-  [SerializeField] private TextMeshProUGUI _text;
   [SerializeField] private Transform _rankContainer;
   [SerializeField] private Transform _rankTemplate;
 
@@ -46,7 +45,7 @@ public class GameOverUI : MonoBehaviour
 
   private void Ranking(List<PlayerController> rankList)
   {
-    foreach (var player in rankList)
+    foreach (PlayerController player in rankList)
     {
       //Get player name
       ulong clientId = player.OwnerClientId;
@@ -56,15 +55,11 @@ public class GameOverUI : MonoBehaviour
       Transform rankTransform = Instantiate(_rankTemplate, _rankContainer);
       rankTransform.gameObject.SetActive(true);
 
-      SetRankUI(playerName, rankList.IndexOf(player) + 1);
+      rankTransform.GetComponent<GameOverRankLine>().SetRankUI(playerName, rankList.IndexOf(player) + 1);
     }
   }
 
-  private void SetRankUI(string name, int rank){
-    _text.text = rank + ".  " + name + "\n";
-  }
-
-    public void Hide()
+  public void Hide()
   {
     gameObject.SetActive(false);
   }
