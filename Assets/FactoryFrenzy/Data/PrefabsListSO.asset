@@ -17,43 +17,54 @@ MonoBehaviour:
       type: 3}
     Name: PlatformBasics
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 4449698721295848804, guid: 5d8eabc7358d82f46b3cb0fec0f5272a,
       type: 3}
     Name: PlatformSlopeStraight
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 5901607417165739079, guid: cde5331b2b064984893fee709bf6ea53,
       type: 3}
     Name: PlatformTurn
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 1322459593123859795, guid: d2be97095b8b6714481f3b961928dd87,
       type: 3}
     Name: EndLine
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 4652329573806549489, guid: 2ee7f6e77dd8b6a4083726485da5b624,
       type: 3}
     Name: Platform Start
     IsStartPlatform: 1
-  - Prefab: {fileID: 4652329573806549489, guid: cbef053bb7f0361469609f5fd499b1d2,
-      type: 3}
-    Name: Platform Move 520
-    IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 7356618759891282059, guid: 97880d74699992140a2075c89767f600,
       type: 3}
     Name: BumperWall
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 4496279611688992215, guid: 13685d51cd7ac4244abb226856d4fcd5,
       type: 3}
     Name: Checkpoint
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 4652329573806549489, guid: fff5ce17bdec2aa45bda1ca50537819c,
       type: 3}
     Name: Fan
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 3415843420151695100, guid: 04a77e7e43a79ed478e212e4f5ede12d,
       type: 3}
     Name: Trampoline
     IsStartPlatform: 0
+    IsMovingPlatform: 0
   - Prefab: {fileID: 4652329573806549489, guid: 314d91501ee14ad40998d5f8d2644b7e,
       type: 3}
     Name: Turret
     IsStartPlatform: 0
+    IsMovingPlatform: 0
+  - Prefab: {fileID: 6299092136328854919, guid: b2aecc4df5c18284781474e949dfc76e,
+      type: 3}
+    Name: MovingPlatform
+    IsStartPlatform: 0
+    IsMovingPlatform: 1

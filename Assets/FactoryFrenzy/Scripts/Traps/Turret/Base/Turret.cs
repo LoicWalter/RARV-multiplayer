@@ -39,6 +39,7 @@ public class Turret : NetworkBehaviour
   [Tooltip("The turret's cannon. Used to rotate the turret to look up and down.")]
   public GameObject TurretCannon;
 
+  public AudioSource TurretAudioSource { get; private set; }
   public TurretIdleSOBase TurretIdleBaseInstance { get; set; }
   public TurretAttackSOBase TurretAttackBaseInstance { get; set; }
   public TurretAimSOBase TurretAimBaseInstance { get; set; }
@@ -66,6 +67,7 @@ public class Turret : NetworkBehaviour
   {
     InitializeStateMachine();
     _playersDetector = GetComponentInChildren<PlayersDetector>();
+    TurretAudioSource = GetComponent<AudioSource>();
   }
 
   private void Start()
