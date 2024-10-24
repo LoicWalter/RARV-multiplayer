@@ -128,7 +128,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
       FactoryFrenzyGameManager.Instance.OnGameStateChanged += GameManager_OnGameStateChanged;
       FactoryFrenzyGameManager.Instance.SetLocalPlayerReady();
     }
-    playerInput.enabled = true;
+
+    playerInput.enabled = _forceIsOwner;
   }
 
   #endregion
@@ -148,6 +149,9 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
+    _moveDirection = Vector2.zero;
+    if (_forceIsOwner)
+      OnNetworkSpawn();
   }
 
   private void Update()
@@ -206,6 +210,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   public void OnMove(CallbackContext context)
   {
+    Debug.Log("OnMove");
     _moveDirection = context.ReadValue<Vector2>();
     if (_moveDirection != Vector2.zero)
     {
