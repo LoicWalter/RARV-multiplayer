@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2017567704272652391}
   - component: {fileID: 2521811738621912295}
-  - component: {fileID: 2583841144770488888}
   - component: {fileID: 1009275286314379453}
   - component: {fileID: 1340821933405573316}
   - component: {fileID: 5583501217236604050}
+  - component: {fileID: 268664542485381836}
   m_Layer: 0
   m_Name: Checkpoint
   m_TagString: Untagged
@@ -58,20 +58,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2583841144770488888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4496279611688992215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 413d3ecdeaf11a0498ad3eaa28a56dcb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CheckpointFlagged: {fileID: 2100000, guid: 54e4ac01b961a8a43878f6e42bd50488, type: 2}
-  _FlagRenderer: {fileID: 8512307646738902850}
 --- !u!114 &1009275286314379453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +186,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &268664542485381836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4496279611688992215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4248520a6323ee24f87beae8619fb375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CheckpointFlagged: {fileID: 2100000, guid: 54e4ac01b961a8a43878f6e42bd50488, type: 2}
+  _FlagRenderer: {fileID: 8512307646738902850}
 --- !u!1001 &8236396794722399034
 PrefabInstance:
   m_ObjectHideFlags: 0
