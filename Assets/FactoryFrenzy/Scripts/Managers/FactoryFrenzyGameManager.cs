@@ -29,7 +29,7 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
 
   public NetworkVariable<float> CountdownDuration = new(3f);
 
-  public List<PlayerController> PlayerRanks = new();
+  public NetworkList<PlayerControllerData> PlayerRanks = new();
 
   private NetworkVariable<GameState> _currentGameState = new(GameState.WaitingToStart);
 
@@ -234,18 +234,35 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     SetGameState(GameState.Countdown);
   }
 
-  public void AddPlayerRank(PlayerController playerController)
+  public void AddPlayerRank(PlayerControllerData playerControllerData)
   {
-    if (PlayerRanks.Contains(playerController)) return;
+    AddPlayerRankServerRpc(playerControllerData);
+  }
 
-    PlayerRanks.Add(playerController);
+  [ServerRpc(RequireOwnership = false)]
+  private void AddPlayerRankServerRpc(PlayerControllerData PlayerControllerData, ServerRpcParams rpcParams = default)
+  {
+    if (PlayerRanks.Contains(PlayerControllerData)) return;
+
+    PlayerRanks.Add(PlayerControllerData);
 
     Debug.Log("Player has finished the game in " + PlayerRanks.Count + " place.");
 
-    if (PlayerRanks.Count == NetworkManager.Singleton.ConnectedClientsList.Count - 1)
+    if (PlayerRanks.Count == NetworkManager.Singleton.ConnectedClientsList.Count)
     {
       SetGameState(GameState.GameOver);
     }
+  }
+
+  public List<PlayerControllerData> GetPlayerRanks()
+  {
+    List<PlayerControllerData> playerRanks = new();
+
+    foreach (PlayerControllerData player in PlayerRanks)
+    {
+      playerRanks.Add(player);
+    }
+    return playerRanks;
   }
 
   #endregion
