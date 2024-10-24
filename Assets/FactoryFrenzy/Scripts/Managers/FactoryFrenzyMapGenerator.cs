@@ -49,15 +49,6 @@ public class FactoryFrenzyMapGenerator : MonoBehaviour
       GameObject go = Instantiate(prefab, levelObject.position, levelObject.rotation);
       go.transform.localScale = levelObject.scale;
 
-      if (go.TryGetComponent<NetworkObject>(out var networkObject))
-      {
-        networkObject.Spawn();
-      }
-      else
-      {
-        Logger.LogError($"Prefab {levelObject.prefabName} does not have NetworkObject component.");
-      }
-
       if (prefabItem.IsMovingPlatform)
       {
         if (go.TryGetComponent(out MovingPlatform movingPlatformComponent))
@@ -80,7 +71,15 @@ public class FactoryFrenzyMapGenerator : MonoBehaviour
         {
           Logger.LogError("Start platform prefab does not have StartPlatform component. Maybe the prefab name is incorrect?");
         }
+      }
 
+      if (go.TryGetComponent<NetworkObject>(out var networkObject))
+      {
+        networkObject.Spawn();
+      }
+      else
+      {
+        Logger.LogError($"Prefab {levelObject.prefabName} does not have NetworkObject component.");
       }
     }
   }
