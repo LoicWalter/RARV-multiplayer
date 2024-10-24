@@ -50,8 +50,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
   public bool IsMoving { get; private set; } = false;
-  public bool IsFalling { get => Rb.velocity.y < 0; }
-  public bool IsRising { get => Rb.velocity.y > 0; }
+  public bool IsFalling { get => Rb.velocity.y < -0.1f; }
+  public bool IsRising { get => Rb.velocity.y > 0.1f; }
   public Vector3 RespawnPos { get; set; }
 
 
@@ -134,6 +134,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   private void Start()
   {
+    RespawnPos = transform.position;
     if (FactoryFrenzyGameManager.Instance != null)
     {
       PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
@@ -144,9 +145,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-    RespawnPos = transform.position;
-
-    OnNetworkSpawn();
   }
 
   private void Update()
@@ -267,7 +265,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
     // Calculer la direction d'entrée normalisée
     Vector3 inputDirection = new Vector3(requestedDirection.x, 0.0f, requestedDirection.y).normalized;
-    Logger.Log($"Input Direction: {inputDirection}");
 
     // Si une direction est demandée, calculer la rotation cible
     if (requestedDirection != Vector2.zero)

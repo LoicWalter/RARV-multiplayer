@@ -92,8 +92,7 @@ public struct LevelObject
   public SerializableQuaternion rotation;
   public SerializableVector3 scale;
 
-  public SerializableVector3 firstParameter;
-  public SerializableVector3 secondParameter;
+  public SerializableVector3 MoveToPosition;
 }
 
 public static class Importer

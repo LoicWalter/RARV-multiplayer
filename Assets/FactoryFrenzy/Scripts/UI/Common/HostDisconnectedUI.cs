@@ -35,6 +35,8 @@ public class HostDisconnectedUI : MonoBehaviour, IHidable
 
   public void Show()
   {
+    Cursor.lockState = CursorLockMode.None;
+    Cursor.visible = true;
     gameObject.SetActive(true);
   }
 

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 /// <summary>
 /// The turret class
 /// It is responsible for the behavior of the turret
 /// </summary>
-public class Turret : MonoBehaviour
+public class Turret : NetworkBehaviour
 {
   public Rigidbody Rb { get; set; }
 
@@ -80,12 +81,14 @@ public class Turret : MonoBehaviour
 
   private void Update()
   {
-    StateMachine.CurrentState.FrameUpdate();
+    if (IsServer)
+      StateMachine.CurrentState.FrameUpdate();
   }
 
   private void FixedUpdate()
   {
-    StateMachine.CurrentState.PhysicsUpdate();
+    if (IsServer)
+      StateMachine.CurrentState.PhysicsUpdate();
   }
 
   #region Initializations
