@@ -10,12 +10,11 @@ public class PrefabsListSO : ScriptableObject
 {
   [SerializeField] private List<PrefabItem> _prefabs = new();
 
-  public GameObject GetPrefab(string prefabName)
+  public GameObject GetPrefab(string prefabName, out PrefabItem prefabItem)
   {
-    return _prefabs.Find(prefab => prefab.Name == prefabName)?.Prefab;
+    prefabItem = _prefabs.Find(prefab => prefab.Name == prefabName);
+    return prefabItem?.Prefab;
   }
-
-  public GameObject StartPlatformPrefab => _prefabs.Find(prefab => prefab.IsStartPlatform).Prefab;
 
   [ContextMenu("Init")]
   private void Init()
@@ -55,4 +54,5 @@ public class PrefabItem
   public GameObject Prefab;
   public string Name;
   public bool IsStartPlatform;
+  public bool IsMovingPlatform;
 }
