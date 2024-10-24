@@ -1,63 +1,58 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using WebSocketSharp;
 
 [CreateAssetMenu(fileName = "PrefabsListSO", menuName = "PrefabsListSO", order = 0)]
 public class PrefabsListSO : ScriptableObject
 {
-  [SerializeField] private GameObject[] _prefabs;
-  [SerializeField] private string _startPlatformPrefabName;
-
-  private Dictionary<string, GameObject> _prefabsDictionary;
+  [SerializeField] private List<PrefabItem> _prefabs = new();
 
   public GameObject GetPrefab(string prefabName)
   {
-    if (_prefabsDictionary.ContainsKey(prefabName))
-    {
-      return _prefabsDictionary[prefabName];
-    }
-
-    return null;
+    return _prefabs.Find(prefab => prefab.Name == prefabName)?.Prefab;
   }
 
-  public GameObject StartPlatformPrefab => GetPrefab(_startPlatformPrefabName);
+  public GameObject StartPlatformPrefab => _prefabs.Find(prefab => prefab.IsStartPlatform).Prefab;
 
-  [ExecuteInEditMode]
-  private void OnValidate()
+  [ContextMenu("Init")]
+  private void Init()
   {
-    foreach (var prefab in _prefabs)
+    foreach (PrefabItem prefab in _prefabs)
     {
-      if (prefab == null)
+      if (prefab.Prefab == null)
       {
-        Logger.LogError("Prefab is null in PrefabsListSO, please assign all prefabs.");
+        Debug.LogError($"A Prefab is missing a reference. Please assign it.");
         return;
       }
 
-      if (string.IsNullOrEmpty(prefab.name))
+      if (prefab.Name.IsNullOrEmpty())
       {
-        Logger.LogError("Prefab name is empty in PrefabsListSO, please assign all prefab names.");
-        return;
+        Logger.LogWarning($"Prefab {prefab.Prefab.name} is missing a name. Adding it now...");
+        prefab.Name = prefab.Prefab.name;
       }
 
-      if (!prefab.TryGetComponent<NetworkObject>(out _))
+      if (!prefab.Prefab.TryGetComponent<NetworkObject>(out _))
       {
-        Logger.LogWarning($"Prefab {prefab.name} is missing a NetworkObject component. Adding one now...");
-        prefab.AddComponent<NetworkObject>();
-        Logger.LogWarning($"NetworkObject component added to {prefab.name}. Don't forget to assign it to the NetworkManager.");
+        Logger.LogWarning($"Prefab {prefab.Name} is missing a NetworkObject component. Adding one now...");
+        prefab.Prefab.AddComponent<NetworkObject>();
+        Logger.LogWarning($"NetworkObject component added to {prefab.Name}. Don't forget to assign it to the NetworkManager.");
       }
     }
-
-    Logger.Log("PrefabsListSO validated.");
   }
 
   private void OnEnable()
   {
-    Logger.Log("Generating dictionary...");
-    _prefabsDictionary = new Dictionary<string, GameObject>();
-    foreach (var prefab in _prefabs)
-    {
-      _prefabsDictionary.Add(prefab.name, prefab);
-    }
-    Logger.Log("Dictionary generated.");
+    Init();
   }
+}
+
+[Serializable]
+public class PrefabItem
+{
+  public GameObject Prefab;
+  public string Name;
+  public bool IsStartPlatform;
 }
