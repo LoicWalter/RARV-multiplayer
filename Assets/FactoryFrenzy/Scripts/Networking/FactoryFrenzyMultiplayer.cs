@@ -268,7 +268,7 @@ public class FactoryFrenzyMultiplayer : NetworkBehaviour
   }
 
   public string GetPlayerNameFromClientId(ulong clientId)
-{
+  {
     foreach (PlayerData playerData in _playerDataNetworkList)
     {
         if (playerData.clientId == clientId)
@@ -277,6 +277,6 @@ public class FactoryFrenzyMultiplayer : NetworkBehaviour
         }
     }
     return "Unknown player";
-}
+  }
 
 }

@@ -2,10 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using TMPro;
 using UnityEngine.UI;
-using UnityEngine.Rendering;
 
 public class GameOverUI : MonoBehaviour
 {
@@ -30,8 +27,7 @@ public class GameOverUI : MonoBehaviour
   {
     if (FactoryFrenzyGameManager.Instance.IsGameOver())
     {
-      List<PlayerController> rankList = FactoryFrenzyGameManager.Instance.PlayerRanks;
-      Ranking(rankList);
+      Ranking();
       Show();
     }
     else
@@ -40,19 +36,21 @@ public class GameOverUI : MonoBehaviour
     }
   }
 
-  private void Ranking(List<PlayerController> rankList)
+  private void Ranking()
   {
-    foreach (PlayerController player in rankList)
+    var instance = FactoryFrenzyGameManager.Instance.GetPlayerRanks();
+
+    foreach (PlayerControllerData player in instance)
     {
       //Get player name
-      ulong clientId = player.OwnerClientId;
+      ulong clientId = player.clientId;
       string playerName = FactoryFrenzyMultiplayer.Instance.GetPlayerNameFromClientId(clientId);
 
       //Instantiate rank line
       Transform rankTransform = Instantiate(_rankTemplate, _rankContainer);
       rankTransform.gameObject.SetActive(true);
 
-      rankTransform.GetComponent<GameOverRankLine>().SetRankUI(playerName, rankList.IndexOf(player) + 1);
+      rankTransform.GetComponent<GameOverRankLine>().SetRankUI(playerName, instance.IndexOf(player) + 1);
       //player.freeCamera.gameObject.SetActive(false);
     }
   }

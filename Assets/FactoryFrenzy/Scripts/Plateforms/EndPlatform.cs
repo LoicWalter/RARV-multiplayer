@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Cinemachine;
-using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -16,33 +13,35 @@ public class EndGameWaiting : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other){
-        if(other.transform.root.CompareTag("Player")){
+        if(other.attachedRigidbody.CompareTag("Player")){
 
-            PlayerController playerController = other.transform.root.GetComponent<PlayerController>();
+            PlayerController playerController = other.attachedRigidbody.GetComponent<PlayerController>();
             
             if(playerController != null){
                 playerController.playerInput.enabled = false;
                 playerController.enabled = false;
-                playerController.freeCamera.SetActive(true);
+                //FreeCamera camera = playerController.ActivateFreeCamera();
 
                 //Active effects
                 _CelebrateEffectRight.Play();
                 _CelebrateEffectLeft.Play();
                 _audioSource.Play();
 
-                FactoryFrenzyGameManager.Instance.AddPlayerRank(playerController);
+                PlayerControllerData playerControllerData = new PlayerControllerData{
+                    clientId = playerController.OwnerClientId,
+                };
+                
+                FactoryFrenzyGameManager.Instance.AddPlayerRank(playerControllerData);
 
-                StartCoroutine(EnableFreeCamera(playerController.freeCamera));
+                //StartCoroutine(EnableFreeCamera(camera));
             }
         }
     }
 
-    private IEnumerator EnableFreeCamera(GameObject freeCamera)
+    private IEnumerator EnableFreeCamera(FreeCamera freeCamera)
     {
-        FreeCamera camera = freeCamera.GetComponent<FreeCamera>();
-
-        camera.enabled = false;
+        freeCamera.enabled = false;
         yield return new WaitForSeconds(2);
-        camera.enabled = true;
+        freeCamera.enabled = true;
     }
 }
