@@ -14,7 +14,6 @@ public class CharacterSelectUI : MonoBehaviour
   [SerializeField] private MapSelectUI _mapSelectUI;
   [SerializeField] private TextMeshProUGUI _lobbyNameText;
   [SerializeField] private TextMeshProUGUI _lobbyCodeText;
-  [SerializeField] private TextMeshProUGUI _mapNameText;
 
   private void Awake()
   {
@@ -40,7 +39,6 @@ public class CharacterSelectUI : MonoBehaviour
   {
     _lobbyNameText.text = "Lobby Name: " + FactoryFrenzyLobby.Instance.LobbyName;
     _lobbyCodeText.text = "Lobby Code: " + FactoryFrenzyLobby.Instance.LobbyCode;
-    UpdateMapNameText();
 
     if (NetworkManager.Singleton.IsHost)
     {
@@ -51,21 +49,5 @@ public class CharacterSelectUI : MonoBehaviour
       _mapSelectButton.gameObject.SetActive(false);
     }
 
-    FactoryFrenzyLobby.Instance.OnMapNameChanged += FactoryFrenzyLobby_OnMapNameChanged;
-  }
-
-  private void FactoryFrenzyLobby_OnMapNameChanged(object sender, EventArgs e)
-  {
-    UpdateMapNameText();
-  }
-
-  private void UpdateMapNameText()
-  {
-    _mapNameText.text = "Map: " + FactoryFrenzyLobby.Instance.MapName;
-  }
-
-  private void OnDestroy()
-  {
-    FactoryFrenzyLobby.Instance.OnMapNameChanged -= FactoryFrenzyLobby_OnMapNameChanged;
   }
 }

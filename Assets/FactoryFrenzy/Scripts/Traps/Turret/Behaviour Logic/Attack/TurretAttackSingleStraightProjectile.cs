@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 /// <summary>
@@ -51,7 +52,9 @@ public class TurretAttackSingleStraightProjectile : TurretAttackSOBase
   /// </summary>
   public override void Shoot()
   {
+    if (!NetworkManager.Singleton.IsServer) return;
     GameObject bullet = Instantiate(_bulletPrefab, turret.BulletSpawnPoint.position, Quaternion.identity);
+    bullet.GetComponent<NetworkObject>().Spawn();
     var bulletRb = bullet.GetComponent<Rigidbody>();
     bulletRb.AddForce(bulletRb.mass * BulletSpeed * turret.TurretCannon.transform.right, ForceMode.Impulse);
     Destroy(bullet, _timeTillDestroy);

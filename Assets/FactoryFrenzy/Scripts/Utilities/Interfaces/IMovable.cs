@@ -23,7 +23,7 @@ public interface IPlayerMovable
   /// <param name="direction">
   ///   The direction to move the player in.
   /// </param>
-  void Move(Vector3 direction);
+  void Move(Vector2 direction);
 
   /// <summary>
   /// Rotates the player in the specified direction.

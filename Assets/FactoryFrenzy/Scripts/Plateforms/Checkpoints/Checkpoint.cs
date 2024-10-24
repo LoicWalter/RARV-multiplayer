@@ -1,26 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(FlagColor))]
 public class Checkpoint : MonoBehaviour
 {
-  [SerializeField] private MeshRenderer _meshRenderer;
+  // [SerializeField] private MeshRenderer _meshRenderer;
   private List<PlayerController> _listPlayerActive = new();
-  private Material _materialActive;
+  // private Material _materialActive;
 
-  private void Awake()
-  {
-    _materialActive = new Material(_meshRenderer.material);
-    _meshRenderer.material = _materialActive;
-  }
+  // private void Awake()
+  // {
+  //   _materialActive = new Material(_meshRenderer.material);
+  //   _meshRenderer.material = _materialActive;
+  // }
 
   void OnTriggerEnter(Collider other)
   {
-    if (other.transform.root.CompareTag("Player"))
+    if (other.attachedRigidbody.CompareTag("Player"))
     {
-      var playerController = other.transform.root.GetComponent<PlayerController>();
+      var playerController = other.attachedRigidbody.GetComponent<PlayerController>();
 
       if (_listPlayerActive.Contains(playerController)) return;
 

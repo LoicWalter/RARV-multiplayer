@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-  public static Bullet Instance { get; private set; }
-
   [Header("Settings")]
   [SerializeField] private bool _shouldGrow = true;
   [SerializeField] private float _timeToGrow = 2f;
@@ -13,14 +11,6 @@ public class Bullet : MonoBehaviour
 
   private Vector3 _currentScale;
   private float _timer = 0;
-
-  private void Awake()
-  {
-    if (Instance == null)
-    {
-      Instance = this;
-    }
-  }
 
   void Start()
   {
@@ -47,10 +37,5 @@ public class Bullet : MonoBehaviour
     }
 
     transform.localScale = Vector3.Lerp(_currentScale, _currentScale * _endSizeMultiplier, t);
-
-    if (Instance == this)
-    {
-      Logger.Log("Bullet is growing: " + transform.localScale);
-    }
   }
 }

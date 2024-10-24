@@ -22,7 +22,7 @@ public class FanTrapPushSystem : MonoBehaviour
     var otherRb = other.attachedRigidbody;
     if (otherRb && otherRb.CompareTag("Player"))
     {
-      other.attachedRigidbody.AddForce(transform.forward * pushForceMultiplier, ForceMode.Force);
+      otherRb.AddForce(transform.forward * pushForceMultiplier, ForceMode.Force);
     }
   }
 }

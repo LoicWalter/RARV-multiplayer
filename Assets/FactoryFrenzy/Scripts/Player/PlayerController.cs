@@ -25,17 +25,16 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   [SerializeField] private bool _forceIsOwner = false;
 
   [Header("Settings"), Space(5)]
-  private Vector3 _moveDirection;
+  private Vector2 _moveDirection;
   [Header("Movement")]
   [Tooltip("The speed at which the player moves when running.")]
   [SerializeField] private float RunSpeed = 10f;
   [Tooltip("The speed at which the player moves when walking.")]
   [SerializeField] private float WalkSpeed = 5f;
-  [Tooltip("Whether the player is running or walking.")]
-  [SerializeField] private bool IsRunning = false;
+  public bool IsRunning { get; private set; } = false;
 
   [field: SerializeField, Tooltip("The speed at which the player rotates their view.")]
-  public float LookSpeed { get; private set; } = 2f;
+  public float LookSpeed { get; private set; } = 1f;
 
   [field: SerializeField, Tooltip("The force applied to the player when they jump.")]
   public float JumpForce { get; private set; } = 2f;
@@ -50,8 +49,10 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public LayerMask GroundLayer { get; private set; }
   public Rigidbody Rb { get; private set; }
   public float Speed { get => IsRunning ? RunSpeed : WalkSpeed; }
-  public bool IsMoving { get => Rb.velocity.magnitude > 0.1f; }
-  public Vector3 RespawnPos;
+  public bool IsMoving { get; private set; } = false;
+  public bool IsFalling { get => Rb.velocity.y < -0.1f; }
+  public bool IsRising { get => Rb.velocity.y > 0.1f; }
+  public Vector3 RespawnPos { get; set; }
 
 
 
@@ -64,14 +65,28 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public Transform CameraLookPoint;
   [Tooltip("The point at which the camera will follow.")]
   public Transform CameraFollowPoint;
+  [Tooltip("How far in degrees can you move the camera up")]
+  public float TopClamp = 70.0f;
+
+  [Tooltip("How far in degrees can you move the camera down")]
+  public float BottomClamp = -30.0f;
+
+  [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
+  public float CameraAngleOverride = 0.0f;
   [field: SerializeField, Header("Other"), Tooltip("The point at which enemies will aim.")]
   public Transform AimPoint { get; private set; }
   [Tooltip("The player's visual representation.")]
   [SerializeField] private PlayerVisual _playerVisual;
   [Tooltip("The Y limit at which the player will respawn.")]
   [SerializeField] private float _limitY = -5f;
-  private Vector3 _currentVelocity;
   private CinemachineVirtualCamera _virtualCamera;
+  private const float _threshold = 0.1f;
+  private float _cinemachineTargetYaw;
+  private float _cinemachineTargetPitch;
+  private float _targetRotation;
+  private float _rotationVelocity;
+  private GameObject _mainCamera;
+  public event EventHandler OnJumpEvent;
 
   #endregion
 
@@ -94,7 +109,11 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
     _virtualCamera = Instantiate(VirtualCameraPrefab, transform.position, Quaternion.identity);
     _virtualCamera.Follow = CameraFollowPoint;
-    _virtualCamera.LookAt = CameraLookPoint;
+    //_virtualCamera.LookAt = CameraLookPoint;
+
+    _mainCamera = Camera.main.gameObject;
+
+    _cinemachineTargetYaw = CameraFollowPoint.transform.rotation.eulerAngles.y;
 
     _virtualCamera.enabled = true;
 
@@ -115,6 +134,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   private void Start()
   {
+    RespawnPos = transform.position;
     if (FactoryFrenzyGameManager.Instance != null)
     {
       PlayerData playerData = FactoryFrenzyMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
@@ -125,9 +145,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private void Awake()
   {
     Rb = GetComponent<Rigidbody>();
-    RespawnPos = transform.position;
-
-    OnNetworkSpawn();
   }
 
   private void Update()
@@ -135,11 +152,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     if (!IsOwner && !_forceIsOwner) return;
     GroundedCheck();
     RespawnPlayerAt();
-
-    if (Mouse.current.delta.ReadValue().magnitude > 0)
-    {
-      Rotate(new Vector3(Mouse.current.delta.ReadValue().x, 0, Mouse.current.delta.ReadValue().y));
-    }
   }
 
   private void FixedUpdate()
@@ -148,11 +160,17 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     Move(_moveDirection);
   }
 
+  private void LateUpdate()
+  {
+    CameraRotation();
+  }
+
   private void RespawnPlayerAt()
   {
     if (transform.position.y < _limitY)
     {
       transform.position = RespawnPos;
+      Rb.velocity = Vector3.zero;
     }
   }
 
@@ -185,7 +203,15 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   public void OnMove(CallbackContext context)
   {
-    _moveDirection = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
+    _moveDirection = context.ReadValue<Vector2>();
+    if (_moveDirection != Vector2.zero)
+    {
+      IsMoving = true;
+    }
+    else
+    {
+      IsMoving = false;
+    }
   }
 
   public void OnRun(CallbackContext context)
@@ -195,14 +221,15 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
 
   public void OnJump(CallbackContext context)
   {
-    Jump();
+    if (context.performed)
+      Jump();
   }
 
-  //? Ne fonctionne pas pour une raison inconnue => n'est pas appelée
-  public void OnLook(CallbackContext context)
-  {
-    Rotate(new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y));
-  }
+  // //? Ne fonctionne pas pour une raison inconnue => n'est pas appelée
+  // public void OnLook(CallbackContext context)
+  // {
+  //   Rotate(new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y));
+  // }
 
   #endregion
 
@@ -216,6 +243,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   public void Jump()
   {
     if (!IsGrounded) return;
+    OnJumpEvent?.Invoke(this, EventArgs.Empty);
     Rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
   }
 
@@ -224,16 +252,73 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     transform.Rotate(Vector3.up, rotation.x * LookSpeed);
   }
 
-  public void Move(Vector3 requestedDirection)
+  public void Move(Vector2 requestedDirection)
   {
-    Vector3 currentvelocity = Rb.velocity;
-    Vector3 MoveDirection = transform.TransformDirection(requestedDirection);
-    Vector3 targetVelocity = MoveDirection * Speed;
+    // Calculer la vitesse cible en fonction de l'état de course ou de marche
+    float targetSpeed = Speed;
 
-    // Smoothly interpolate between the current velocity and the target velocity
-    Vector3 newVelocity = Vector3.SmoothDamp(currentvelocity, targetVelocity, ref _currentVelocity, 0.1f);
-    Rb.velocity = new Vector3(newVelocity.x, currentvelocity.y, newVelocity.z);
+    // Si aucune direction n'est demandée, la vitesse cible est 0
+    if (requestedDirection == Vector2.zero)
+    {
+      targetSpeed = 0.0f;
+    }
+
+    // Calculer la direction d'entrée normalisée
+    Vector3 inputDirection = new Vector3(requestedDirection.x, 0.0f, requestedDirection.y).normalized;
+
+    // Si une direction est demandée, calculer la rotation cible
+    if (requestedDirection != Vector2.zero)
+    {
+      _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
+      float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, 0.12f);
+
+      // Faire pivoter le joueur pour faire face à la direction d'entrée relative à la position de la caméra
+      transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+    }
+
+    // Calculer la direction cible en fonction de la rotation cible
+    Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+
+    // Calculer la position cible en fonction de la direction cible et de la vitesse cible
+    Vector3 targetPosition = transform.position + targetSpeed * Time.fixedDeltaTime * targetDirection;
+
+    // Utiliser MovePosition pour déplacer le joueur sans affecter directement la vélocité
+    Rb.MovePosition(targetPosition);
+  }
+
+  private void CameraRotation()
+  {
+    // if there is an input and camera position is not fixed
+    if (Mouse.current.delta.ReadValue().sqrMagnitude >= _threshold /* && !LockCameraPosition */)
+    {
+      var readValue = Mouse.current.delta.ReadValue();
+      _cinemachineTargetYaw += readValue.x;
+      if (readValue.y > 0)
+      {
+        readValue.y--;
+      }
+      if (readValue.y < 0)
+      {
+        readValue.y++;
+      }
+      _cinemachineTargetPitch += readValue.y;
+    }
+
+    // clamp our rotations so our values are limited 360 degrees
+    _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+    _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+
+    // Cinemachine will follow this target
+    CameraFollowPoint.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+        _cinemachineTargetYaw, 0.0f);
   }
 
   #endregion
+
+  private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
+  {
+    if (lfAngle < -360f) lfAngle += 360f;
+    if (lfAngle > 360f) lfAngle -= 360f;
+    return Mathf.Clamp(lfAngle, lfMin, lfMax);
+  }
 }

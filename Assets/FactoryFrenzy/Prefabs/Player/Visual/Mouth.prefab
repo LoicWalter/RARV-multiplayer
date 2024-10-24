@@ -9561,7 +9561,6 @@ GameObject:
   - component: {fileID: 4832975957339762193}
   - component: {fileID: 3463009238732967058}
   - component: {fileID: 1693788955142601102}
-  - component: {fileID: 9072227072602355866}
   m_Layer: 0
   m_Name: BottomLip
   m_TagString: Untagged
@@ -11908,16 +11907,3 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9024848246489661574}
   m_Mesh: {fileID: 0}
---- !u!114 &9072227072602355866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9024848246489661574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c6356c80746f5845bf7cdbe3d16d0e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gameObjectToBindWith: {fileID: 0}

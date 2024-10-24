@@ -32,7 +32,6 @@ public class ImportErrorUI : MonoBehaviour, IHidable
     gameObject.SetActive(false);
   }
 
-
   public void SetErrorText(string text)
   {
     _errorText.text = text;
