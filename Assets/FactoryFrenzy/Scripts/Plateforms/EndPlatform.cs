@@ -39,7 +39,7 @@ public class EndGameWaiting : MonoBehaviour
 
         FactoryFrenzyGameManager.Instance.AddPlayerRank(playerControllerData);
 
-        //StartCoroutine(EnableFreeCamera(camera));
+        playerController.EnableFreeCameraIfExist();
       }
     }
   }

@@ -85,7 +85,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   [SerializeField]
   public GameObject freeCameraPrefab;
 
-  [Tooltip("The point at which the camera will look.")]
+  [Tooltip("The point at which the free camera will look when spawning.")]
   public Transform CameraLookPoint;
 
   [Tooltip("The point at which the camera will follow.")]
@@ -120,7 +120,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private float _rotationVelocity;
   private GameObject _mainCamera;
   public event EventHandler OnJumpEvent;
-  private bool _isFreeCameraActive = false;
   private GameObject _freeCameraInstance;
 
   #endregion
@@ -143,6 +142,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     }
 
     _virtualCamera = Instantiate(VirtualCameraPrefab, transform.position, Quaternion.identity);
+    _freeCameraInstance = Instantiate(freeCameraPrefab, transform.position, Quaternion.identity);
     _virtualCamera.Follow = CameraFollowPoint;
     //_virtualCamera.LookAt = CameraLookPoint;
 
@@ -151,6 +151,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     _cinemachineTargetYaw = CameraFollowPoint.transform.rotation.eulerAngles.y;
 
     _virtualCamera.enabled = true;
+    _freeCameraInstance.SetActive(false);
 
     Cursor.lockState = CursorLockMode.Locked;
     Cursor.visible = false;
@@ -240,6 +241,11 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     else
     {
       playerInput.enabled = false;
+    }
+
+    if (FactoryFrenzyGameManager.Instance.IsGameOver())
+    {
+      _freeCameraInstance.GetComponent<FreeCamera>().enabled = false;
     }
   }
 
@@ -388,21 +394,22 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     return Mathf.Clamp(lfAngle, lfMin, lfMax);
   }
 
-  public FreeCamera ActivateFreeCamera()
+  public void EnableFreeCameraIfExist(bool teleport = true)
   {
-    if (!_isFreeCameraActive)
+    if (_freeCameraInstance == null) return;
+
+    _freeCameraInstance.SetActive(true);
+
+    if (teleport)
     {
-      _isFreeCameraActive = true;
-
-      // Instantiate the free camera
-      _freeCameraInstance = Instantiate(
-          freeCameraPrefab,
-          transform.position,
-          transform.rotation
-      );
-      _freeCameraInstance.SetActive(true);
+      _freeCameraInstance.transform.position = CameraLookPoint.position;
+      // look at the player
+      _freeCameraInstance.transform.LookAt(transform);
     }
+  }
 
-    return _freeCameraInstance.GetComponent<FreeCamera>();
+  public bool GetIsOwner()
+  {
+    return IsOwner;
   }
 }
