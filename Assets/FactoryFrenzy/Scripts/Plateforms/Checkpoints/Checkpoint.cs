@@ -7,6 +7,13 @@ public class Checkpoint : MonoBehaviour
 {
   // [SerializeField] private MeshRenderer _meshRenderer;
   private List<PlayerController> _listPlayerActive = new();
+  private AudioSource _audioSource;
+
+  void Start()
+  {
+    _audioSource = gameObject.GetComponent<AudioSource>();
+  }
+
   // private Material _materialActive;
 
   // private void Awake()
@@ -26,6 +33,9 @@ public class Checkpoint : MonoBehaviour
       //New respawn position
       playerController.RespawnPos = transform.position;
       _listPlayerActive.Add(playerController);
+
+      //Audio
+      _audioSource.Play();
 
       //change color Active checkpoint
       //_materialActive.color = Color.green;
