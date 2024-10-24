@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Unity.VisualScripting;
 
 /// <summary>
 /// The game manager for the Factory Frenzy game.
@@ -49,6 +50,11 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     {
       Instance = this;
     }
+  }
+
+  private void Start()
+  {
+    SoundManager.Instance.PlayMusic(SoundManager.SoundsName.InGame);
   }
 
   private void Update()
@@ -266,4 +272,5 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
   }
 
   #endregion
+
 }

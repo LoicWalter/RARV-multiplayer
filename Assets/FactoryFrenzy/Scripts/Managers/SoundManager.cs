@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,18 +15,33 @@ public class SoundManager : MonoBehaviour
         InGame,
     }
 
-    void Awake(){
+    private void Awake(){
         if (Instance == null){
             Instance = this;
         }
         else
         {
-            Destroy(gameObject);
+            StopMusic();
+            Destroy(Instance.gameObject);
+            Instance = this;
         }
     }
 
-    public void PlayMusic(){
+    private void Start(){
+        PlayMusic(SoundsName.Lobby);
+    }
 
+    public void StopMusic(){
+        musicSource.Stop();
+    }
+
+    public void PlayMusic(SoundsName SoundName){
+        Sound Sound = Array.Find(musicSounds, sound => sound.name == SoundName);
+
+        if (Sound == null) return;
+
+        musicSource.clip = Sound.audioClip;
+        musicSource.Play();
     }
 }
 
