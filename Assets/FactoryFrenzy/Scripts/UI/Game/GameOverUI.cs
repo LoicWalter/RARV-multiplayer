@@ -5,16 +5,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 public class GameOverUI : MonoBehaviour
 {
   [SerializeField] private Button _mainMenuButton;
   [SerializeField] private Transform _rankContainer;
   [SerializeField] private Transform _rankTemplate;
-
-  private void Awake(){
-    _rankTemplate.gameObject.SetActive(false);
-  }
 
   private void Start()
   {
@@ -51,11 +48,12 @@ public class GameOverUI : MonoBehaviour
       ulong clientId = player.OwnerClientId;
       string playerName = FactoryFrenzyMultiplayer.Instance.GetPlayerNameFromClientId(clientId);
 
-      //Instanciate rank line
+      //Instantiate rank line
       Transform rankTransform = Instantiate(_rankTemplate, _rankContainer);
       rankTransform.gameObject.SetActive(true);
 
       rankTransform.GetComponent<GameOverRankLine>().SetRankUI(playerName, rankList.IndexOf(player) + 1);
+      //player.freeCamera.gameObject.SetActive(false);
     }
   }
 
@@ -67,5 +65,13 @@ public class GameOverUI : MonoBehaviour
   public void Show()
   {
     gameObject.SetActive(true);
+    Cursor.lockState = CursorLockMode.None;
+    Cursor.visible = true;
+  }
+
+  private void OnDestroy()
+  {
+    FactoryFrenzyGameManager.Instance.OnGameStateChanged -= GameManager_OnGameStateChanged;
+    _mainMenuButton.onClick.RemoveAllListeners();
   }
 }          
