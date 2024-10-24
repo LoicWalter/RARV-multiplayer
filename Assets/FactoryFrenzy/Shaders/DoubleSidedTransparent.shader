@@ -5,6 +5,7 @@ Shader "Custom/DoubleSidedTransparent"
         _MainTex ("Texture", 2D) = "white" {}     // La texture d'origine
         _ReplaceColor ("Replace Color", Color) = (1,0,0,1) // Couleur de remplacement (rouge par défaut)
         _Threshold ("Threshold", Range(0,1)) = 0.5 // Seuil de détection des pixels rouges
+        _GlobalOpacity ("Global Opacity", Range(0,1)) = 1.0 // Opacité globale de la texture
     }
     SubShader
     {
@@ -12,7 +13,7 @@ Shader "Custom/DoubleSidedTransparent"
         LOD 200
 
         Blend SrcAlpha OneMinusSrcAlpha // Activer la transparence
-        Cull Off // Désactiver la culling pour rendre les deux côtés
+        Cull Off // Désactiver le culling pour rendre les deux côtés
 
         Pass
         {
@@ -24,6 +25,7 @@ Shader "Custom/DoubleSidedTransparent"
             sampler2D _MainTex;
             float4 _ReplaceColor;  // Couleur de remplacement
             float _Threshold;      // Seuil pour détecter la quantité de rouge
+            float _GlobalOpacity;  // Opacité globale
 
             struct appdata
             {
@@ -60,12 +62,12 @@ Shader "Custom/DoubleSidedTransparent"
                 if (texColor.r > texColor.g + _Threshold && texColor.r > texColor.b + _Threshold)
                 {
                     // Remplace le pixel rouge par la couleur définie, tout en conservant l'alpha (transparence)
-                    return float4(_ReplaceColor.rgb, texColor.a);
+                    return float4(_ReplaceColor.rgb, texColor.a * _GlobalOpacity);
                 }
                 else
                 {
-                    // Sinon, conserve la couleur et l'alpha d'origine
-                    return texColor;
+                    // Sinon, conserve la couleur et applique l'opacité globale
+                    return float4(texColor.rgb, texColor.a * _GlobalOpacity);
                 }
             }
             ENDCG

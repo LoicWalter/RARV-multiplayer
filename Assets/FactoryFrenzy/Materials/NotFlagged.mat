@@ -127,6 +127,7 @@ Material:
     - _EnableDetailMask: 0
     - _EnableTriplanarProjection: 1
     - _EnvironmentReflections: 1
+    - _GlobalOpacity: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
