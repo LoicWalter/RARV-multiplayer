@@ -29,7 +29,7 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
 
   public NetworkVariable<float> CountdownDuration = new(3f);
 
-  public List<PlayerController> PlayerRanks = new ();
+  public List<PlayerController> PlayerRanks = new();
 
   private NetworkVariable<GameState> _currentGameState = new(GameState.WaitingToStart);
 
@@ -104,7 +104,7 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     Logger.Log("Current game state: " + _currentGameState.Value);
     foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
     {
-      Vector3 randomPosition = _startPlatform.GetRandomUnusedPlateformSpawnPoint().position;
+      Vector3 randomPosition = _startPlatform.GetRandomUnusedPlatformSpawnPoint().position;
       Transform playerTransform = Instantiate(_playerPrefab, randomPosition, Quaternion.identity);
       playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
     }
@@ -241,7 +241,7 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     PlayerRanks.Add(playerController);
 
     Debug.Log("Player has finished the game in " + PlayerRanks.Count + " place.");
-    
+
     if (PlayerRanks.Count == NetworkManager.Singleton.ConnectedClientsList.Count - 1)
     {
       SetGameState(GameState.GameOver);

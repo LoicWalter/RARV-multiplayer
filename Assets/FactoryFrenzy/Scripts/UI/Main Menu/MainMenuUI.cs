@@ -23,7 +23,7 @@ public class MainMenuUI : MonoBehaviour
 
   private void ImportMaps()
   {
-    if (Importer.AddJSONFilesFromExplorer(out List<string> errorMessages))
+    if (Importer.AddJSONFilesFromExplorer(out List<string> errorMessages, "Maps"))
     {
       return;
     }

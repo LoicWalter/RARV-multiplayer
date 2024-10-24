@@ -10,10 +10,9 @@ public class Trampoline : MonoBehaviour
 
   void OnCollisionEnter(Collision other)
   {
-    if (other.gameObject.CompareTag("Player") && !isBouncing)
+    if (other.rigidbody.CompareTag("Player") && !isBouncing)
     {
-      var player = other.gameObject.GetComponent<IPlayerMovable>();
-      player.Rb.AddForce(Vector3.up * bounceForce, ForceMode.Impulse);
+      other.rigidbody.AddForce(Vector3.up * bounceForce, ForceMode.Impulse);
 
       //prevent OnCollisionEnter from being called twice
       isBouncing = true;

@@ -188,7 +188,9 @@ public static class Importer
   {
     List<string> fileNames = new();
     RemoveUnecessaryCharacters(ref pathName);
-    string[] files = Directory.GetFiles(_streamingAssetsPath + "/" + pathName, "*.json", SearchOption.TopDirectoryOnly);
+    string folderPath = _streamingAssetsPath + "/" + pathName;
+    Logger.Log(folderPath);
+    string[] files = Directory.GetFiles(folderPath, "*.json", SearchOption.TopDirectoryOnly);
     foreach (string file in files)
     {
       string fileName = Path.GetFileName(file);
@@ -197,7 +199,7 @@ public static class Importer
     return fileNames;
   }
 
-  public static bool AddJSONFilesFromExplorer(out List<string> errorMessages, string path = "")
+  public static bool AddJSONFilesFromExplorer(out List<string> errorMessages, string path)
   {
     errorMessages = new List<string>();
     string[] paths = SFB.StandaloneFileBrowser.OpenFilePanel("Choose JSON files", path, "json", true);
@@ -237,6 +239,7 @@ public static class Importer
   {
     string fileName = Path.GetFileNameWithoutExtension(filePath);
     string fullLocalPath = GetFullPath(fileName, ref localPath);
+    Logger.Log(fullLocalPath);
     if (File.Exists(fullLocalPath))
     {
       throw new FileAlreadyExistException("File already exists");

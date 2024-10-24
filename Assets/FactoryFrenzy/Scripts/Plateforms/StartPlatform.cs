@@ -27,7 +27,7 @@ public class StartPlatform : MonoBehaviour
     }
   }
 
-  public Transform GetRandomUnusedPlateformSpawnPoint()
+  public Transform GetRandomUnusedPlatformSpawnPoint()
   {
     int randomIndex;
     do
