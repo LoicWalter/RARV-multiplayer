@@ -110,7 +110,15 @@ public class TurretAimSOBase : ScriptableObject
 
     // for the turret cannon, only rotate up and down
     Quaternion newTurretCannonRotation = Quaternion.Euler(0, targetRotation.eulerAngles.x, 0);
-    turret.TurretCannon.transform.localRotation = Quaternion.Slerp(turret.TurretCannon.transform.localRotation, newTurretCannonRotation, _rotationSpeed * Time.deltaTime);
+    Quaternion rotation = Quaternion.Slerp(turret.TurretCannon.transform.localRotation, newTurretCannonRotation, _rotationSpeed * Time.deltaTime);
+    turret.TurretCannon.transform.localRotation = rotation;
+
+    bool reverseRotation = Vector3.Dot(turret.TurretCannon.transform.forward, requestedDirection) < 0;
+    turret.Animator.SetBool("ReverseRotate", reverseRotation);
+
+    float animationSpeed = Mathf.Abs(Vector3.Angle(turret.TurretCannon.transform.forward, requestedDirection) / 180);
+    turret.Animator.SetFloat("RotateSpeed", animationSpeed);
+
 
     SetLineOfSight(turret.TurretCannon.transform.right);
 
@@ -120,8 +128,10 @@ public class TurretAimSOBase : ScriptableObject
     Vector3 requestedRotation = newTurretBaseRotation.eulerAngles;
     requestedRotation.y = 0;
 
-    float angle = Vector3.Angle(currentRotation, requestedRotation);
+    // set the rotation speed for the animator
+    turret.Animator.SetFloat("RotateSpeed", _rotationSpeed);
 
+    float angle = Vector3.Angle(currentRotation, requestedRotation);
     return angle < _angleTolerance;
   }
 }

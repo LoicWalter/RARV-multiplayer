@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -32,13 +33,24 @@ public class TurretAttackSOBase : ScriptableObject
 
   public virtual void DoFrameLogic()
   {
+    turret.Animator.SetTrigger("Shoot");
+    turret.TurretAudioSource.Play();
     Shoot();
     turret.StateMachine.ChangeState(turret.AimState);
+    turret.StartCoroutine(WaitTillResetAnimator());
   }
 
   public virtual void DoPhysicsLogic() { }
 
-  public virtual void ResetValues() { }
+  public virtual void ResetValues()
+  {
+  }
 
   public virtual void Shoot() { }
+
+  private IEnumerator WaitTillResetAnimator()
+  {
+    yield return new WaitForSeconds(AttackCooldown / 2);
+    turret.Animator.ResetTrigger("Shoot");
+  }
 }

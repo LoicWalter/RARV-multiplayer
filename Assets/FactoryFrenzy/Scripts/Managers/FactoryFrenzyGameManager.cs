@@ -49,6 +49,10 @@ public class FactoryFrenzyGameManager : NetworkBehaviour
     {
       Instance = this;
     }
+    else
+    {
+      Destroy(gameObject);
+    }
   }
 
   private void Update()
