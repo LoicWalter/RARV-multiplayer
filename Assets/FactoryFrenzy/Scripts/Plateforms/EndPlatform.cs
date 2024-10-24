@@ -7,36 +7,48 @@ public class EndGameWaiting : MonoBehaviour
 {
   [SerializeField] private ParticleSystem _CelebrateEffectLeft;
   [SerializeField] private ParticleSystem _CelebrateEffectRight;
+  private AudioSource _audioSource;
+
+  void Awake()
+  {
+    _audioSource = gameObject.GetComponent<AudioSource>();
+  }
+
   void OnTriggerEnter(Collider other)
   {
-    if (other.transform.root.CompareTag("Player"))
+    if (other.attachedRigidbody.CompareTag("Player"))
     {
 
-      PlayerController playerController = other.transform.root.GetComponent<PlayerController>();
+      PlayerController playerController = other.attachedRigidbody.GetComponent<PlayerController>();
 
       if (playerController != null)
       {
         playerController.playerInput.enabled = false;
         playerController.enabled = false;
-        playerController.freeCamera.SetActive(true);
+        //FreeCamera camera = playerController.ActivateFreeCamera();
 
         //Active effects
         _CelebrateEffectRight.Play();
         _CelebrateEffectLeft.Play();
+        _audioSource.Play();
 
-        FactoryFrenzyGameManager.Instance.AddPlayerRank(playerController);
+        PlayerControllerData playerControllerData = new PlayerControllerData
+        {
+          clientId = playerController.OwnerClientId,
+        };
 
-        StartCoroutine(EnableFreeCamera(playerController.freeCamera));
+        FactoryFrenzyGameManager.Instance.AddPlayerRank(playerControllerData);
+
+        //StartCoroutine(EnableFreeCamera(camera));
       }
     }
   }
 
-  private IEnumerator EnableFreeCamera(GameObject freeCamera)
-  {
-    FreeCamera camera = freeCamera.GetComponent<FreeCamera>();
-
-    camera.enabled = false;
-    yield return new WaitForSeconds(2);
-    camera.enabled = true;
-  }
+  //   private IEnumerator EnableFreeCamera(FreeCamera freeCamera)
+  //   {
+  //     freeCamera.enabled = false;
+  //     yield return new WaitForSeconds(2);
+  //     freeCamera.enabled = true;
+  //   }
 }
+

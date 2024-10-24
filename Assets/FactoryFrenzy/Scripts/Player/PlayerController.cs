@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using static UnityEngine.InputSystem.InputAction;
 
 /// <summary>
@@ -59,7 +60,7 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   [field: SerializeField, Header("Camera"), Tooltip("The camera used to follow the player.")]
   public CinemachineVirtualCamera VirtualCameraPrefab { get; private set; }
   [Tooltip("The camera used after crossing the end line.")]
-  [SerializeField] public GameObject freeCamera;
+  [SerializeField] public GameObject freeCameraPrefab;
 
   [Tooltip("The point at which the camera will look.")]
   public Transform CameraLookPoint;
@@ -87,6 +88,8 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
   private float _rotationVelocity;
   private GameObject _mainCamera;
   public event EventHandler OnJumpEvent;
+  private bool _isFreeCameraActive = false;
+  private GameObject _freeCameraInstance;
 
   #endregion
 
@@ -312,7 +315,6 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     CameraFollowPoint.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
         _cinemachineTargetYaw, 0.0f);
   }
-
   #endregion
 
   private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
@@ -320,5 +322,18 @@ public class PlayerController : NetworkBehaviour, IPlayerMovable
     if (lfAngle < -360f) lfAngle += 360f;
     if (lfAngle > 360f) lfAngle -= 360f;
     return Mathf.Clamp(lfAngle, lfMin, lfMax);
+  }
+  public FreeCamera ActivateFreeCamera()
+  {
+    if (!_isFreeCameraActive)
+    {
+      _isFreeCameraActive = true;
+
+      // Instantiate the free camera
+      _freeCameraInstance = Instantiate(freeCameraPrefab, transform.position, transform.rotation);
+      _freeCameraInstance.SetActive(true);
+    }
+
+    return _freeCameraInstance.GetComponent<FreeCamera>();
   }
 }

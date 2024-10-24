@@ -267,4 +267,16 @@ public class FactoryFrenzyMultiplayer : NetworkBehaviour
     NetworkManager_Server_OnClientDisconnectCallback(clientId);
   }
 
+  public string GetPlayerNameFromClientId(ulong clientId)
+  {
+    foreach (PlayerData playerData in _playerDataNetworkList)
+    {
+        if (playerData.clientId == clientId)
+        {
+            return playerData.playerName.ToString();
+        }
+    }
+    return "Unknown player";
+  }
+
 }
